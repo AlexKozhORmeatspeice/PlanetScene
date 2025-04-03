@@ -6,8 +6,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
+public interface ISpaceWindow_PlanetView : IGradientChangable
+{
 
-public class SpaceWindow_PlanetView : MonoBehaviour, IGradientChangable
+}
+public class SpaceWindow_PlanetView : MonoBehaviour, ISpaceWindow_PlanetView
 {
     [Header("Planet rect")]
     [SerializeField] private RectTransform rectTransformPlanet;

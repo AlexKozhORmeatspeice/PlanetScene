@@ -12,30 +12,27 @@ public interface ISpaceWindow
 
 }
 
-public class SpaceWindow : MonoBehaviour, ISpaceWindow, IStartable, IDisposable
+public class SpaceWindow : MonoBehaviour, ISpaceWindow, IDisposable
 {
-    private List<IPlanetInteraction> planetUIs;
+    [SerializeField] private GameObject PlanetsContent;
+    private List<IPlanet> planetUIs;
 
     [Inject]
     public void Construct(IObjectResolver resolver)
     {
-        planetUIs = gameObject.GetComponentsInChildren<IPlanetInteraction>().ToList();
-
-        planetUIs.ForEach(planet => {resolver.Inject(planet) ; planet.Init(resolver); });
-    }
-
-    void IStartable.Start()
-    {
-        //
-    }
-
-    public void Initialize()
-    {
-        planetUIs.ForEach(planet => { planet.Enable(); });
+        planetUIs = PlanetsContent.GetComponentsInChildren<IPlanet>().ToList();
+        foreach(var planet in planetUIs)
+        {
+            resolver.Inject(planet);
+            planet.Init(resolver);
+        }
     }
 
     public void Dispose()
     {
-        planetUIs.ForEach(planet => { planet.Disable(); });
+        foreach(var planet in planetUIs)
+        {
+            planet.Disable();
+        }
     }
 }

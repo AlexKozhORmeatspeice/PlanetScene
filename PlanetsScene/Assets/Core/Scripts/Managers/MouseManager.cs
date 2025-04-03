@@ -26,7 +26,7 @@ public interface IPointerManager
     public bool IsDown { get; }
 }
 
-public class MouseManager : MonoBehaviour, IPointerManager, ITickable
+public class MouseManager : IPointerManager, ITickable
 {
     private Camera _camera;
     private Vector3 lastClickPos;

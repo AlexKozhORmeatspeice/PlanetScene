@@ -42,13 +42,13 @@ public class MouseMoveGradientObserver : IGradientObserver
         isMouseEntered = false;
     }
 
-    public void Enable()
+    public virtual void Enable()
     {
         view.Name = screenObj.Name;
         view.SetVisibility(0.0f);
     }
 
-    public void Disable()
+    public virtual void Disable()
     {
         SetNotInterective();
     }
@@ -109,11 +109,14 @@ public class MouseMoveGradientObserver : IGradientObserver
 
     private float GetMouseToObjDist()
     {
-        return Vector2.Distance((Vector2)(screenObj.Position), _cursorManager.NowWorldPosition);
+        Vector3 objPos = (Vector2)(screenObj.Position);
+        Vector3 cursorPos = _cursorManager.NowWorldPosition;
+
+        return Mathf.Max(Mathf.Abs(objPos.x - cursorPos.x), Mathf.Abs(objPos.y - cursorPos.y));
     }
 
     private float GetOuterRadius()
     {
-        return screenObj.Size.magnitude;
+        return Mathf.Max(screenObj.Size.x, screenObj.Size.x);
     }
 }

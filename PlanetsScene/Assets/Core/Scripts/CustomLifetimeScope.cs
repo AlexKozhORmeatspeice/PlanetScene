@@ -22,11 +22,19 @@ public class CustomLifetimeScope : LifetimeScope
 
     private void SectorWindowInit(IContainerBuilder builder)
     {
+        builder.RegisterComponentInHierarchy<PlanetToolTip>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
         builder.RegisterComponentInHierarchy<SpaceWindow>()
             .AsImplementedInterfaces()
             .AsSelf();
 
-        builder.RegisterComponentInHierarchy<PlanetToolTip>()
+        builder.RegisterComponentInHierarchy<PlanetTooltipSystem>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
+        builder.RegisterComponentInHierarchy<PlanetMouseEvents>()
             .AsImplementedInterfaces()
             .AsSelf();
     }

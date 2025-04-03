@@ -22,7 +22,7 @@ public class TopPart_SectorNameObserver : MonoBehaviour, ITopPart_SectorNameObse
 
     public void Enable()
     {
-        travelManager.onTravelToAnotherPlanet += ChangeSectorName;
+        travelManager.onTravel += ChangeSectorName;
         
         planetWindow.onEnable += view.Disable;
         planetWindow.onDisable += view.Enable;
@@ -30,7 +30,7 @@ public class TopPart_SectorNameObserver : MonoBehaviour, ITopPart_SectorNameObse
 
     public void Disable()
     {
-        travelManager.onTravelToAnotherPlanet -= ChangeSectorName;
+        travelManager.onTravel -= ChangeSectorName;
 
         planetWindow.onEnable -= view.Disable;
         planetWindow.onDisable -= view.Enable;

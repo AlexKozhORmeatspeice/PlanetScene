@@ -4,27 +4,28 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 public interface ITravelManager
 {
-    IPlanetInfo nowPlanet { set; get; }
+    IPlanet nowPlanet { get; }
     string nowPlanetName { get; }
     string nowSectorName { get; }
     string nowPlanetDesc { get; }
 
-    bool IsNowPlanet(IPlanetInfo planet);
-    event Action onTravelToAnotherPlanet;
+    bool IsNowPlanet(IPlanet planet);
+    event Action<IPlanet> onTravelToPlanet;
+    event Action onTravel;
 }
 
-public class TravelManager : MonoBehaviour, ITravelManager
+public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposable
 {
-    private IPlanetInfo activePlanet;
-    public IPlanetInfo nowPlanet {
-        set
-        {
-            onTravelToAnotherPlanet?.Invoke();
-            activePlanet = value;
-        }
+    [Inject] private IPlanetMouseEvents mousePlanet;
+    private IPlanet activePlanet;
+    public event Action<IPlanet> onTravelToPlanet;
+    public event Action onTravel;
+
+    public IPlanet nowPlanet {
         get
         {
             return activePlanet;
@@ -37,16 +38,28 @@ public class TravelManager : MonoBehaviour, ITravelManager
 
     public string nowPlanetDesc => activePlanet == null ? "" : activePlanet.Description;
 
-    public bool IsNowPlanet(IPlanetInfo planet)
+    public bool IsNowPlanet(IPlanet planet)
     {
         return activePlanet != null && activePlanet.Equals(planet);
     }
-
-    public event Action onTravelToAnotherPlanet;
-
-    [Inject]
-    public void Construct()
+    private void SetNowPlanet(IPlanet planet)
     {
-        nowPlanet = null;
+        activePlanet = planet;
+        
+        onTravelToPlanet?.Invoke(planet);
+        onTravel?.Invoke();
     }
+
+    public void Initialize()
+    {
+        activePlanet = null;
+        mousePlanet.OnMouseDoubleClick += SetNowPlanet;
+    }
+
+    public void Dispose()
+    {
+        mousePlanet.OnMouseDoubleClick -= SetNowPlanet;
+    }
+
+    public void Start() { }
 }

@@ -34,7 +34,7 @@ public class PlanetWindow_InfoObserver : IPlanetWindow_InfoObserver
 
     public void Enable()
     {
-        _travelManager.onTravelToAnotherPlanet += UpdateInfo;
+        _travelManager.onTravel += UpdateInfo;
         UpdateInfo();
 
         scaner.onChangeIsScanning += SetNotVisible;
@@ -42,7 +42,7 @@ public class PlanetWindow_InfoObserver : IPlanetWindow_InfoObserver
 
     public void Disable()
     {
-        _travelManager.onTravelToAnotherPlanet -= UpdateInfo;
+        _travelManager.onTravel -= UpdateInfo;
 
         scaner.onChangeIsScanning -= SetNotVisible;
         SetNotVisible(false);

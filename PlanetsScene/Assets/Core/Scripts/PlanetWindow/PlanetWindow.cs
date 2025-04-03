@@ -16,6 +16,7 @@ public interface IPlanetWindow
 
 public class PlanetWindow : MonoBehaviour, IPlanetWindow, IStartable, IDisposable
 {
+    [Inject] private ITravelManager travelManager;
     [Inject] private IPointerManager pointerManager;
     [Inject] private IScaner scaner;
     
@@ -46,11 +47,13 @@ public class PlanetWindow : MonoBehaviour, IPlanetWindow, IStartable, IDisposabl
     public void Initialize()
     {
         scanerButton.Init(scanerButtonPresenter);
+        travelManager.onTravel += Enable;
     }
 
     public void Dispose()
     {
         infoObserver.Disable();
+        travelManager.onTravel -= Enable;
     }
 
 

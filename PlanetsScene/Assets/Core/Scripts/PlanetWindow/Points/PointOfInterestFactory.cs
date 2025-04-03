@@ -16,7 +16,7 @@ public struct PointInfo
     public PointActionType type;
     public Texture icon;
     public bool isVisible;
-    public IPlanetInfo planet;
+    public IPlanet planet;
 }
 
 public interface IPointOfInterestFactory

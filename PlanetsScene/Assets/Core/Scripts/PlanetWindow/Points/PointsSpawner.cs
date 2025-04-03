@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 public interface IPointsSpawner
 {
-    Dictionary<IPlanetInfo, List<IPointOfInterest>> PointsByPlanet { get; }
+    Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet { get; }
 }
 
 public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposable
@@ -20,12 +20,12 @@ public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposa
     [Inject] private ITravelManager travelManager;
     [SerializeField] private RectTransform _rectTransform;
 
-    private Dictionary<IPlanetInfo, List<IPointOfInterest>> pointsByPlanet;
-    private Dictionary<IPlanetInfo, bool> setStatusByPlanet;
+    private Dictionary<IPlanet, List<IPointOfInterest>> pointsByPlanet;
+    private Dictionary<IPlanet, bool> setStatusByPlanet;
 
-    private IPlanetInfo nowPlanet;
+    private IPlanet nowPlanet;
 
-    public Dictionary<IPlanetInfo, List<IPointOfInterest>> PointsByPlanet => pointsByPlanet;
+    public Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet => pointsByPlanet;
 
     public void Start()
     {
@@ -34,8 +34,8 @@ public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposa
 
     public void Initialize()
     {
-        pointsByPlanet = new Dictionary<IPlanetInfo, List<IPointOfInterest>>();
-        setStatusByPlanet = new Dictionary<IPlanetInfo, bool>();
+        pointsByPlanet = new Dictionary<IPlanet, List<IPointOfInterest>>();
+        setStatusByPlanet = new Dictionary<IPlanet, bool>();
 
         planetWindow.onEnable += SetPlanet;
         planetWindow.onEnable += SpawnPoints;
