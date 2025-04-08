@@ -11,22 +11,33 @@ public interface IPlanetWindow_ScanerObserver
 
 public class PlanetWindow_ScanerObserver : IPlanetWindow_ScanerObserver
 {
+    private IScaner scaner;
     [Inject] private IPointerManager pointer;
+
     private IPlanetWindow_Scaner view;
     private float lastSpeed;
-    public PlanetWindow_ScanerObserver(IPlanetWindow_Scaner view)
+    public PlanetWindow_ScanerObserver(IPlanetWindow_Scaner view, IScaner scaner)
     {
+        this.scaner = scaner;
         this.view = view;
         lastSpeed = 0.0f;
     }
 
     public void Enable()
     {
+        scaner.onStartScanning += EnableScanning;
         pointer.OnUpdate += ChangeSize;
+
+        view.isVisible = true;
+        view.scanerFiledIsVisible = false;
     }
      
     public void Disable()
     {
+        view.isVisible = false;
+        view.scanerFiledIsVisible = false;
+
+        scaner.onStartScanning -= EnableScanning;
         pointer.OnUpdate -= ChangeSize;
     }
 
@@ -37,5 +48,10 @@ public class PlanetWindow_ScanerObserver : IPlanetWindow_ScanerObserver
         lastSpeed = Mathf.Clamp01(lastSpeed);
 
         view.ChangeSize(lastSpeed);
+    }
+
+    private void EnableScanning()
+    {
+        view.scanerFiledIsVisible = true;
     }
 }

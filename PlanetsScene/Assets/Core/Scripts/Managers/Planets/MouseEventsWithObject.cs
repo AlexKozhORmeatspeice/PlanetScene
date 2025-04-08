@@ -8,26 +8,26 @@ using UnityEngine.EventSystems;
 using VContainer;
 using VContainer.Unity;
 
-public interface IPlanetMouseEvents
+public interface IMouseEventsWithObject<T>
 {
-    event Action<IPlanet> OnMouseEnter;
-    event Action<IPlanet> OnMouseMove;
-    event Action<IPlanet> OnMouseLeave;
-    event Action<IPlanet> OnMouseClick;
-    event Action<IPlanet> OnMouseDoubleClick;
+    event Action<T> OnMouseEnter;
+    event Action<T> OnMouseMove;
+    event Action<T> OnMouseLeave;
+    event Action<T> OnMouseClick;
+    event Action<T> OnMouseDoubleClick;
 }
 
-public class PlanetMouseEvents : MonoBehaviour, IPlanetMouseEvents, ITickable, IStartable, IDisposable
+public class MouseEventsWithObject<T> : MonoBehaviour, IMouseEventsWithObject<T>, ITickable, IStartable, IDisposable
 {
     [Inject] private IPointerManager pointer;
     private bool isEntered;
-    private IPlanet nowPlanet;
+    private T nowObj;
 
-    public event Action<IPlanet> OnMouseEnter;
-    public event Action<IPlanet> OnMouseLeave;
-    public event Action<IPlanet> OnMouseClick;
-    public event Action<IPlanet> OnMouseDoubleClick;
-    public event Action<IPlanet> OnMouseMove;
+    public event Action<T> OnMouseEnter;
+    public event Action<T> OnMouseLeave;
+    public event Action<T> OnMouseClick;
+    public event Action<T> OnMouseDoubleClick;
+    public event Action<T> OnMouseMove;
 
     public void Initialize()
     {
@@ -43,27 +43,27 @@ public class PlanetMouseEvents : MonoBehaviour, IPlanetMouseEvents, ITickable, I
         var results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
 
-        if (results.Count > 0 && results[0].gameObject.GetComponent<IPlanet>() != null)
+        if (results.Count > 0 && results[0].gameObject.GetComponent<T>() != null)
         {
-            IPlanet newPlanet = results[0].gameObject.GetComponent<IPlanet>();
+            T newPlanet = results[0].gameObject.GetComponent<T>();
             if (newPlanet == null)
                 return;
 
-            if (nowPlanet == null && !isEntered)
+            if (nowObj == null && !isEntered)
             {
-                nowPlanet = newPlanet;
+                nowObj = newPlanet;
                 isEntered = true;
 
-                OnMouseEnter?.Invoke(nowPlanet);
+                OnMouseEnter?.Invoke(nowObj);
             }
 
-            OnMouseMove?.Invoke(nowPlanet);
+            OnMouseMove?.Invoke(nowObj);
         }
         else if(isEntered)
         {
             isEntered = false;
-            nowPlanet = null;
-            OnMouseLeave?.Invoke(nowPlanet);
+            nowObj = default;
+            OnMouseLeave?.Invoke(nowObj);
         }
     }
     public void Dispose()
@@ -74,17 +74,17 @@ public class PlanetMouseEvents : MonoBehaviour, IPlanetMouseEvents, ITickable, I
 
     private void InvokeClick()
     {
-        if (nowPlanet == null)
+        if (nowObj == null)
             return;
 
-        OnMouseClick?.Invoke(nowPlanet);
+        OnMouseClick?.Invoke(nowObj);
     }
     private void InvokeDoubleClick()
     {
-        if (nowPlanet == null)
+        if (nowObj == null)
             return;
 
-        OnMouseDoubleClick?.Invoke(nowPlanet);
+        OnMouseDoubleClick?.Invoke(nowObj);
     }
 
     public void Start()

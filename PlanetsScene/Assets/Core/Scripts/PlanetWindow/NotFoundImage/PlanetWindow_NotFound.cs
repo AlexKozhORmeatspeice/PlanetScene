@@ -17,8 +17,7 @@ public class PlanetWindow_NotFound : MonoBehaviour, IPlanetWindow_NotFound
     public Vector3 Pos { set => rectTransform.position = value; }
 
     public void PlayAnim()
-    {
-        Debug.Log(1);
+    { 
         rectTransform.sizeDelta = Vector2.zero;
 
         var seq = DOTween.Sequence();

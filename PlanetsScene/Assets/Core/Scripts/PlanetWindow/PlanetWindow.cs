@@ -10,25 +10,23 @@ public interface IPlanetWindow
     event Action onEnable;
     event Action onDisable;
 
+    void Enable(IPlanet planet);
     void Enable();
     void Disable();
 }
 
 public class PlanetWindow : MonoBehaviour, IPlanetWindow, IStartable, IDisposable
 {
-    [Inject] private ITravelManager travelManager;
-    [Inject] private IPointerManager pointerManager;
     [Inject] private IScaner scaner;
-    
-    private IPlanetWindow_ScanerButtonPresenter scanerButtonPresenter;
-    private IPlanetWindow_InfoObserver infoObserver;
-    private IPLanetWindow_GraphicWindowObserver graphicObserver;
-    private IPlanetWindow_ScanerFiledObserver scanerFieldObserver;
+    [Inject] private ITravelManager travelManager;
 
+    private IPlanetWindowObserver observer;
+    private IPlanetWindow_ScanerButtonPresenter scanerButtonPresenter;
+
+    [SerializeField] private PlanetWindowView planetWindowView;
     [SerializeField] private PlanetWindow_ScanerButton scanerButton;
-    [SerializeField] private PlanetWindow_Info planetInfo;
-    [SerializeField] private PLanetWindow_GraphicWindow graphic;
-    [SerializeField] private PlanetWindow_ScanerFiled scanerField;
+
+    private IPlanet showPlanet;
 
     public bool IsEnabled => gameObject.activeSelf;
 
@@ -38,56 +36,50 @@ public class PlanetWindow : MonoBehaviour, IPlanetWindow, IStartable, IDisposabl
     [Inject]
     public void Construct(IObjectResolver resolver)
     {
-        resolver.Inject(infoObserver = new PlanetWindow_InfoObserver(planetInfo));
-        resolver.Inject(scanerButtonPresenter = new PlanetWindow_ScanerButtonPresenter());
-        resolver.Inject(graphicObserver = new PLanetWindow_GraphicWindowObserver(graphic));
-        resolver.Inject(scanerFieldObserver = new PlanetWindow_ScanerFiledObserver(scanerField));
+        resolver.Inject(scanerButtonPresenter = new PlanetWindow_ScanerButtonPresenter(scanerButton, scaner));
+        resolver.Inject(observer = new PlanetWindowObserver(planetWindowView, scaner, travelManager));
     }
 
     public void Initialize()
     {
-        scanerButton.Init(scanerButtonPresenter);
-        travelManager.onTravel += Enable;
+        travelManager.onTravelToPlanet += Enable;
     }
 
     public void Dispose()
     {
-        infoObserver.Disable();
-        travelManager.onTravel -= Enable;
+        Disable();
+        travelManager.onTravelToPlanet -= Enable;
     }
 
 
-    void IStartable.Start()
+    void IStartable.Start() { }
+
+    public void Enable(IPlanet planet)
     {
-        
+        showPlanet = planet;
+
+        observer.Enable(planet);
+        scanerButtonPresenter.Enable();
+
+        onEnable?.Invoke();
+        gameObject.SetActive(true);
     }
 
     public void Enable()
     {
-        gameObject.SetActive(true);
-        
-        scanerFieldObserver.Disable();
+        if (showPlanet == null)
+            return;
 
-        infoObserver.Enable();
-        graphicObserver.Enable();
-        
-        scaner.onScanerEnable += scanerFieldObserver.Enable;
-        scaner.onScanerDisable += scanerFieldObserver.Disable;
-
-        onEnable?.Invoke();
+        Enable(showPlanet);
     }
 
     public void Disable()
     {
-        gameObject.SetActive(false);
+        observer.Disable();
+        scanerButtonPresenter.Disable();
         
-        infoObserver.Disable();
-        graphicObserver.Disable();
-        scaner.SetStatus(false);
-
-        scaner.onScanerEnable -= scanerFieldObserver.Enable;
-        scaner.onScanerDisable -= scanerFieldObserver.Disable;
-
         onDisable?.Invoke();
+
+        scaner.SetStatus(false);
     }
 }

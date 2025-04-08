@@ -18,13 +18,13 @@ public class SpaceWindow : MonoBehaviour, ISpaceWindow, IDisposable
     private List<IPlanet> planetUIs;
 
     [Inject]
-    public void Construct(IObjectResolver resolver)
+    public void Construct(IObjectResolver resolver, ITravelManager travelManager, IPlanetWindow planetWindow)
     {
         planetUIs = PlanetsContent.GetComponentsInChildren<IPlanet>().ToList();
         foreach(var planet in planetUIs)
         {
             resolver.Inject(planet);
-            planet.Init(resolver);
+            planet.Init(resolver, travelManager, planetWindow);
         }
     }
 

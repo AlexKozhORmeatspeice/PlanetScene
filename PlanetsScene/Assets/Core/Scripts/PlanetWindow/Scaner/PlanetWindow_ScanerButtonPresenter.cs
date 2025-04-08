@@ -2,31 +2,42 @@ using VContainer;
 
 public interface IPlanetWindow_ScanerButtonPresenter
 {
-    void Init(IPlanetWindow_ScanerButton view);
-    bool ChangeScanerStatus();
+    void ChangeScanerStatus();
+    void Enable();
+    void Disable();
 }
 
 public class PlanetWindow_ScanerButtonPresenter : IPlanetWindow_ScanerButtonPresenter
 {
-    [Inject] private Scaner scaner;
+    private IScaner scaner;
     private IPlanetWindow_ScanerButton view;
 
-    public void Init(IPlanetWindow_ScanerButton view)
+    public PlanetWindow_ScanerButtonPresenter(IPlanetWindow_ScanerButton view, IScaner scaner)
     {
         this.view = view;
-
+        this.scaner = scaner;
+    }
+    public void Enable()
+    {
         view.SetStatus(scaner.IsScanning);
-        scaner.onScanerDisable += DisableScaner;
+        scaner.onChangeIsScanning += ChangeButtonStatus;
+        view.onClick += ChangeScanerStatus;
     }
 
-    public bool ChangeScanerStatus()
+    public void Disable()
+    {
+        scaner.onChangeIsScanning -= ChangeButtonStatus;
+        view.onClick -= ChangeScanerStatus;
+    }
+
+    public void ChangeScanerStatus()
     {
         scaner.SwapStatus();
-        return scaner.IsScanning;
     }
 
-    private void DisableScaner()
+    private void ChangeButtonStatus(bool isScanning)
     {
-        view.SetStatus(scaner.IsScanning);
+        view.SetStatus(isScanning);
     }
+
 }

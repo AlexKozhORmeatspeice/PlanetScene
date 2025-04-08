@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 
 public interface IPointsSpawner
 {
+    event Action<List<IPointOfInterest>> onUpdatePOIList;
     Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet { get; }
 }
 
@@ -24,6 +25,8 @@ public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposa
     private Dictionary<IPlanet, bool> setStatusByPlanet;
 
     private IPlanet nowPlanet;
+
+    public event Action<List<IPointOfInterest>> onUpdatePOIList;
 
     public Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet => pointsByPlanet;
 
@@ -74,6 +77,8 @@ public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposa
         }
 
         setStatusByPlanet[nowPlanet] = false;
+
+        onUpdatePOIList?.Invoke(pointsByPlanet[nowPlanet]);
     }
 
     private void SpawnPoints() //надо будет доделать, чтобы точки спаунились случайно, но не близко к друг другу

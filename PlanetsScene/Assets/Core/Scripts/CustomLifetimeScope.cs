@@ -7,15 +7,15 @@ public class CustomLifetimeScope : LifetimeScope
     {
         builder.RegisterEntryPoint<EntryPoint>();
 
-        builder.Register<TravelManager>(Lifetime.Scoped)
+        builder.RegisterComponentInHierarchy<TravelManager>()
             .AsImplementedInterfaces();
 
         builder.Register<MouseManager>(Lifetime.Singleton)
             .AsImplementedInterfaces();
 
-        SectorWindowInit(builder);
-
         PlanetWindowInit(builder);
+
+        SectorWindowInit(builder);
 
         TopPartWindowInit(builder);
     }
@@ -72,6 +72,14 @@ public class CustomLifetimeScope : LifetimeScope
             .AsImplementedInterfaces();
 
         builder.RegisterComponentInHierarchy<PointOfInterestGraphic>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
+        builder.RegisterComponentInHierarchy<POITooltipSystem>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
+        builder.RegisterComponentInHierarchy<POIMouseEvents>()
             .AsImplementedInterfaces()
             .AsSelf();
     }

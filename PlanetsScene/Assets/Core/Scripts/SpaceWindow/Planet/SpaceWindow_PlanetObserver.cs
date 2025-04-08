@@ -21,10 +21,15 @@ public class SpaceWindow_PlanetObserver : MouseMoveGradientObserver, ISpaceWindo
 
     private bool isChoosed;
 
-    public SpaceWindow_PlanetObserver(ISpaceWindow_PlanetView view, IPlanet planet) : base(view, planet)
+    public SpaceWindow_PlanetObserver(ISpaceWindow_PlanetView view, 
+                                      IPlanet planet,
+                                      ITravelManager travelManager, 
+                                      IPlanetWindow planetWindow) 
+        : base(view, planet)
     {
         this.view = view;
         this.planet = planet;
+        this.travelManager = travelManager;
     }
 
     public override void Enable()

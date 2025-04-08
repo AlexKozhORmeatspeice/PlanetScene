@@ -580,6 +580,7 @@ GameObject:
   m_Component:
   - component: {fileID: 417200318999200718}
   - component: {fileID: 4833943543968933457}
+  - component: {fileID: 3441754267193829866}
   - component: {fileID: 8135331332496883014}
   - component: {fileID: 932936596628803419}
   m_Layer: 5
@@ -625,11 +626,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colliderTransform: {fileID: 417200318999200718}
-  view: {fileID: 2265695486086212786}
+  view: {fileID: 3441754267193829866}
   distToDetectPlanet: 100
   speedOfDecrease: 0.5
   speedOfIncrease: 4
-  filedObj: {fileID: 2518145254192832403}
+--- !u!114 &3441754267193829866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8703375677805310580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9c77bae4814fe419c58ed933bc4028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 1901060427262837867}
+  rectTransform: {fileID: 417200318999200718}
+  maxSize: {x: 300, y: 300}
+  minSize: {x: 50, y: 50}
+  speedOfChange: 1.5
+  mouseSpeedInfluence: 0.109
 --- !u!50 &8135331332496883014
 Rigidbody2D:
   serializedVersion: 4
@@ -712,7 +730,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8600826466060999533}
   - component: {fileID: 6370230127465177927}
-  - component: {fileID: 2265695486086212786}
   - component: {fileID: 4583791457218972331}
   m_Layer: 5
   m_Name: <img> Scaner
@@ -750,24 +767,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8863321146876171769}
   m_CullTransparentMesh: 1
---- !u!114 &2265695486086212786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8863321146876171769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9c77bae4814fe419c58ed933bc4028, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 1901060427262837867}
-  rectTransform: {fileID: 417200318999200718}
-  maxSize: {x: 300, y: 300}
-  minSize: {x: 50, y: 50}
-  speedOfChange: 1.5
-  mouseSpeedInfluence: 0.109
 --- !u!114 &4583791457218972331
 MonoBehaviour:
   m_ObjectHideFlags: 0

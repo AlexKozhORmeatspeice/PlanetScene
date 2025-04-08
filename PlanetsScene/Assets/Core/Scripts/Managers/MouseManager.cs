@@ -88,7 +88,7 @@ public class MouseManager : IPointerManager, ITickable
 
     private void CheckEvents()
     {
-        if (Math.Abs(Input.GetAxis("Mouse X")) > 0.0f || Math.Abs(Input.GetAxis("Mouse Y")) > 0.0f)
+        if (speed.magnitude >= 0.0f)
         {
             OnPointerMove?.Invoke();
         }

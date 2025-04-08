@@ -46,6 +46,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6358531688895050636}
   - component: {fileID: 2518658557011443899}
+  - component: {fileID: 1672868900431254009}
   m_Layer: 5
   m_Name: Drone
   m_TagString: Untagged
@@ -88,9 +89,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79407ccb5e884154c9c3392aa009e6cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  view: {fileID: 4153507820385555673}
+  view: {fileID: 1672868900431254009}
   startPoint: {fileID: 5731006373105038921}
   middlePoint: {fileID: 2507833328109726067}
+--- !u!114 &1672868900431254009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4727490711974547475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fdc2a697128f094e871b9c2572930fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseSize: {x: 100, y: 100}
+  maxSize: {x: 200, y: 200}
+  rectTransform: {fileID: 5610569744886352844}
+  rawImage: {fileID: 4847632030662355505}
 --- !u!1 &7032520085449829186
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,7 +118,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5610569744886352844}
   - component: {fileID: 6589008373126806343}
-  - component: {fileID: 4153507820385555673}
   - component: {fileID: 4847632030662355505}
   m_Layer: 5
   m_Name: <img> Drone
@@ -138,22 +154,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7032520085449829186}
   m_CullTransparentMesh: 1
---- !u!114 &4153507820385555673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7032520085449829186}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fdc2a697128f094e871b9c2572930fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseSize: {x: 100, y: 100}
-  maxSize: {x: 200, y: 200}
-  rectTransform: {fileID: 5610569744886352844}
-  rawImage: {fileID: 4847632030662355505}
 --- !u!114 &4847632030662355505
 MonoBehaviour:
   m_ObjectHideFlags: 0

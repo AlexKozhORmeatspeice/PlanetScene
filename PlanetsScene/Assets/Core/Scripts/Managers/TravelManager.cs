@@ -20,7 +20,7 @@ public interface ITravelManager
 
 public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposable
 {
-    [Inject] private IPlanetMouseEvents mousePlanet;
+    [Inject] private IPlanetMouseEvents planetMouse;
     private IPlanet activePlanet;
     public event Action<IPlanet> onTravelToPlanet;
     public event Action onTravel;
@@ -53,12 +53,12 @@ public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposa
     public void Initialize()
     {
         activePlanet = null;
-        mousePlanet.OnMouseDoubleClick += SetNowPlanet;
+        planetMouse.OnMouseDoubleClick += SetNowPlanet;
     }
 
     public void Dispose()
     {
-        mousePlanet.OnMouseDoubleClick -= SetNowPlanet;
+        planetMouse.OnMouseDoubleClick -= SetNowPlanet;
     }
 
     public void Start() { }

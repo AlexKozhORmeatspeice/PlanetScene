@@ -1,13 +1,13 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using VContainer;
 
 public interface IPlanetWindow_ScanerButton
 {
-    void Init(IPlanetWindow_ScanerButtonPresenter presenter);
-    void OnButtonClick();
+    event UnityAction onClick;
     void SetStatus(bool status);
 }
 
@@ -20,23 +20,10 @@ public class PlanetWindow_ScanerButton : MonoBehaviour, IPlanetWindow_ScanerButt
 
     private bool isScanning;
 
-    private IPlanetWindow_ScanerButtonPresenter presenter;
-
-    public void Init(IPlanetWindow_ScanerButtonPresenter presenter)
+    public event UnityAction onClick
     {
-        button.onClick.RemoveAllListeners();
-
-        this.presenter = presenter;
-        presenter.Init(this);
-
-        button.onClick.AddListener(OnButtonClick);
-    }
-
-    public void OnButtonClick()
-    {
-        bool isScanning = presenter.ChangeScanerStatus();
-
-        SetStatus(isScanning);
+        add => button.onClick.AddListener(value);
+        remove => button.onClick.RemoveListener(value);
     }
 
     public void Dispose()
@@ -44,9 +31,9 @@ public class PlanetWindow_ScanerButton : MonoBehaviour, IPlanetWindow_ScanerButt
         button.onClick.RemoveAllListeners();
     }
 
-    public void SetStatus(bool status)
+    public void SetStatus(bool isActive)
     {
-        if (status)
+        if (isActive)
         {
             buttonTxt.text = activeScannerText;
         }

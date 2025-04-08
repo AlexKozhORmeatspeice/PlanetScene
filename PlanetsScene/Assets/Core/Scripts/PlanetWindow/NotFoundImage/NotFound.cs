@@ -1,14 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 public interface INotFound
 {
-    void Enable(Vector3 pos);
+
 }
 
-public class NotFound : MonoBehaviour, INotFound
+public class NotFound : MonoBehaviour, INotFound, IStartable, IDisposable
 {
     private IPlanetWindow_NotFoundObserver observer;
     [SerializeField] private PlanetWindow_NotFound view;
@@ -18,9 +21,16 @@ public class NotFound : MonoBehaviour, INotFound
     {
         resolver.Inject(observer = new PlanetWindow_NotFoundObserver(view));
     }
-
-    public void Enable(Vector3 pos)
+    public void Initialize()
     {
-        observer.Enable(pos);
+        observer.Enable();
     }
+
+    public void Dispose()
+    {
+        observer.Disable();
+    }
+
+
+    public void Start() { }
 }

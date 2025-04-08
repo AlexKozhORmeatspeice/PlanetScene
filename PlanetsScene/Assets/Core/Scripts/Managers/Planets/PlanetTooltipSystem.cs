@@ -10,7 +10,7 @@ public interface IPlanetToolTipSystem
 
 }
 
-public class PlanetTooltipSystem : MonoBehaviour, IPlanetToolTipSystem, IStartable
+public class PlanetTooltipSystem : MonoBehaviour, IPlanetToolTipSystem, IStartable, IDisposable
 {
     [Inject] private ITravelManager travelManager;
     [Inject] private PlanetToolTip toolTip;
@@ -21,6 +21,12 @@ public class PlanetTooltipSystem : MonoBehaviour, IPlanetToolTipSystem, IStartab
     {
         planetMouse.OnMouseEnter += SetPlanet;
         planetMouse.OnMouseLeave += DisablePlanet;
+    }
+
+    public void Dispose()
+    {
+        planetMouse.OnMouseEnter -= SetPlanet;
+        planetMouse.OnMouseLeave -= DisablePlanet;
     }
 
     public void Start() {}

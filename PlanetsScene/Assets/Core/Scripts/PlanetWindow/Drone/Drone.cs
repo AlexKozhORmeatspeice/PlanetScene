@@ -5,13 +5,14 @@ using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 public interface IDrone
 {
-    event Action onLand;
-    void Land(Vector3 pos);
+    event Action<Vector3, IPointOfInterest> onLand;
+    void Land(Vector3 pos, IPointOfInterest poi);
 }
-public class Drone : MonoBehaviour, IDrone
+public class Drone : MonoBehaviour, IDrone, IStartable, IDisposable
 {
     private IPlanetWindow_DronePresenter presenter;
 
@@ -21,7 +22,10 @@ public class Drone : MonoBehaviour, IDrone
     [SerializeField] private Transform middlePoint;
 
     public event Action onStartLand;
-    public event Action onLand;
+    public event Action<Vector3, IPointOfInterest> onLand;
+
+    private Vector3 landPoint;
+    private IPointOfInterest foundPOI;
 
     [Inject]
     public void Construct(IObjectResolver resolver)
@@ -29,14 +33,28 @@ public class Drone : MonoBehaviour, IDrone
         resolver.Inject(presenter = new PlanetWindow_DronePresenter(view));
         view.Init(presenter);
     }
-
-    public void Land(Vector3 pos)
+    public void Initialize()
     {
-        onStartLand?.Invoke();
         presenter.OnAnimDone += Land;
-
-        presenter.Enable(GetTrajectory(pos));
     }
+
+    public void Dispose()
+    {
+        presenter.OnAnimDone -= Land;
+    }
+
+
+    public void Land(Vector3 pos, IPointOfInterest poi)
+    {
+        foundPOI = poi;
+        landPoint = pos;
+
+        onStartLand?.Invoke();
+        
+
+        presenter.Enable(GetTrajectory(landPoint));
+    }
+
 
     private List<Vector3> GetTrajectory(Vector3 endPos)
     {
@@ -51,6 +69,8 @@ public class Drone : MonoBehaviour, IDrone
 
     private void Land()
     {
-        onLand?.Invoke();
+        onLand?.Invoke(landPoint, foundPOI);
     }
+
+    public void Start() { }
 }

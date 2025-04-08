@@ -10,7 +10,7 @@ using Vector3 = UnityEngine.Vector3;
 
 public interface IPlanet : IScreenObject
 {
-    void Init(IObjectResolver resolver);
+    void Init(IObjectResolver resolver, ITravelManager travelManager, IPlanetWindow planetWindow);
     void Enable();
     void Disable();
     List<PointInfo> PointInfos { get; }
@@ -21,10 +21,6 @@ public interface IPlanet : IScreenObject
 
 public class Planet : MonoBehaviour, IPlanet
 {
-    [Inject] private IPlanetWindow planetWindow;
-    [Inject] private IPointerManager pointer;
-    [Inject] private ITravelManager travelManager;
-
     private ISpaceWindow_PlanetObserver observer;
     [SerializeField] private SpaceWindow_PlanetView view;
 
@@ -48,9 +44,9 @@ public class Planet : MonoBehaviour, IPlanet
 
     List<PointInfo> IPlanet.PointInfos => points;
 
-    public void Init(IObjectResolver resolver)
+    public void Init(IObjectResolver resolver, ITravelManager travelManager, IPlanetWindow planetWindow)
     {
-        resolver.Inject(observer = new SpaceWindow_PlanetObserver(view, this));
+        resolver.Inject(observer = new SpaceWindow_PlanetObserver(view, this, travelManager, planetWindow));
         Enable();
     }
 

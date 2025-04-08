@@ -12,6 +12,7 @@ using VContainer.Unity;
 public interface IScaner
 {
     event Action onScanerEnable;
+    event Action onStartScanning;
     event Action onScanerDisable;
     event Action<bool> onChangeIsScanning;
 
@@ -25,10 +26,10 @@ public interface IScaner
 
 public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
 {
-    [Inject] private INotFound notFound;
     [Inject] private IDrone drone;
+    [Inject] private ITravelManager travelManager;
     [Inject] private IPointerManager pointer;
-    
+
     private IPlanetWindow_ScanerObserver observer;
     private bool isScanning;
     private bool isEnabled;
@@ -41,8 +42,6 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
     [Header("speeds")]
     [SerializeField] private float speedOfDecrease = 0.5f;
     [SerializeField] private float speedOfIncrease = 2.0f;
-    [Header("Objs")]
-    [SerializeField] private GameObject filedObj;
 
     private BoxCollider2D boxCollider;
 
@@ -53,14 +52,16 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
     public event Action onScanerEnable;
     public event Action onScanerDisable;
     public event Action<bool> onChangeIsScanning;
+    public event Action onStartScanning;
 
     private Dictionary<IPointOfInterest, float> seePointValues;
     private IPointOfInterest lastSeenPointOfInterest;
+    private IPlanet scanningPlanet;
 
     [Inject]
     public void Construct(IObjectResolver resolver)
     {
-        resolver.Inject(observer = new PlanetWindow_ScanerObserver(view));
+        resolver.Inject(observer = new PlanetWindow_ScanerObserver(view, this));
     }
 
     public void Start()
@@ -71,29 +72,36 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
     public void Initialize()
     {
         boxCollider = gameObject.GetComponent<BoxCollider2D>();
-        isScanning = false;
         seePointValues = new Dictionary<IPointOfInterest, float>();
+
+        isScanning = false;
+        isEnabled = false;
+
+        //pointsSpawner.onUpdatePOIList += SetSeePOIs;
+
+        travelManager.onTravelToPlanet += SetScanningPlanet;
 
         Disable();
     }
 
     public void Dispose()
     {
+        seePointValues.Clear();
+
+        //pointsSpawner.onUpdatePOIList -= SetSeePOIs;
+
+        travelManager.onTravelToPlanet -= SetScanningPlanet;
+
         Disable();
+
         onScanerEnable = null;
         onScanerDisable = null;
-        seePointValues.Clear();
     }
 
-    public void Tick() //update collider
+    public void Tick()
     {
-        if (this == null || colliderTransform == null)
-            return;
-
         ReduceSeeValues();
-
-        boxCollider.size = new Vector2(colliderTransform.sizeDelta.x, colliderTransform.sizeDelta.y);
-        gameObject.transform.position = pointer.NowWorldPosition;
+        UpdateColliderSize();
     }
 
     public void SetStatus(bool status)
@@ -126,71 +134,58 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
 
     private void Enable()
     {
-        lastSeenPointOfInterest = null;
+        if (scanningPlanet == null)
+            return;
+
         observer.Enable();
+
+        lastSeenPointOfInterest = null;
         gameObject.SetActive(true);
-        SetSeeValues();
 
-        pointer.OnDoubleTap += WaitForFixedPos;
-
+        pointer.OnDoubleTap += StartScanning;
     }
 
-    private void WaitForFixedPos()
+    private void StartScanning()
     {
-        pointer.OnDoubleTap -= WaitForFixedPos;
+        pointer.OnDoubleTap -= StartScanning;
 
         isEnabled = true;
-        filedObj.SetActive(true);
+        onStartScanning?.Invoke();
 
         pointer.OnDoubleTap += CheckPoint;
     }
 
     private void Disable()
     {
+        seePointValues.Clear();
+
         isEnabled = false;
         observer.Disable();
         gameObject.SetActive(false);
-        filedObj.SetActive(false);
 
-        pointer.OnDoubleTap -= WaitForFixedPos;
+        pointer.OnDoubleTap -= StartScanning;
         pointer.OnDoubleTap -= CheckPoint;
     }
 
     private void CheckPoint()
     {
-        //////functions for land/////
         Vector2 nowWorldPos = pointer.NowWorldPosition;
-        void SetPOIActive() {
-            lastSeenPointOfInterest.SetVisibility(true);
-            lastSeenPointOfInterest.SetInterective(true);
-            drone.onLand -= SetPOIActive;
-        }
-        void SetNotFoundActive()
-        {
-            notFound.Enable(nowWorldPos);
-            drone.onLand -= SetNotFoundActive;
-        }
-        /////////////////////////////
-        
-        SetStatus(false);
-        drone.Land(pointer.NowWorldPosition);
 
-        if (lastSeenPointOfInterest == null)
+        if(lastSeenPointOfInterest == null)
         {
-            drone.onLand += SetNotFoundActive;
+            drone.Land(nowWorldPos, lastSeenPointOfInterest);
             return;
         }
-        
+
         float dist = Vector3.Distance(pointer.NowWorldPosition, lastSeenPointOfInterest.GameObject.transform.position);
 
-        if(dist <= distToDetectPlanet)
+        if (dist > distToDetectPlanet)
         {
-            drone.onLand += SetPOIActive;
+            lastSeenPointOfInterest = null;
         }
-        else
-        {
-            drone.onLand += SetNotFoundActive;
-        }
+        drone.Land(nowWorldPos, lastSeenPointOfInterest);
+        
+        SetStatus(false);
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -199,11 +194,11 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
             return;
 
         IPointOfInterest pointOfInterest = other.GetComponent<IPointOfInterest>();
-        
+
         if (pointOfInterest == null)
             return;
-        
-        if(!SeePointValueByPOI.ContainsKey(pointOfInterest))
+
+        if (!SeePointValueByPOI.ContainsKey(pointOfInterest))
         {
             SeePointValueByPOI.Add(pointOfInterest, 0.0f);
         }
@@ -213,24 +208,43 @@ public class Scaner : MonoBehaviour, IScaner, IStartable, ITickable, IDisposable
                                                          10.0f,
                                                          Time.deltaTime * speedOfIncrease);
         }
-        
+
         lastSeenPointOfInterest = pointOfInterest;
     }
 
-    void SetSeeValues()
-    {
-        SeePointValueByPOI.Clear();
-        
-    }
-
-    void ReduceSeeValues()
+    private void ReduceSeeValues()
     {
         List<IPointOfInterest> listPOI = SeePointValueByPOI.Keys.ToList();
         foreach (IPointOfInterest poi in listPOI)
         {
-            SeePointValueByPOI[poi] = Mathf.Lerp(SeePointValueByPOI[poi], 
-                                                 0.0f, 
+            SeePointValueByPOI[poi] = Mathf.Lerp(SeePointValueByPOI[poi],
+                                                 0.0f,
                                                  Time.deltaTime * speedOfDecrease);
+        }
+    }
+
+    private void UpdateColliderSize()
+    {
+        if (boxCollider == null || colliderTransform == null)
+            return;
+
+        boxCollider.size = new Vector2(colliderTransform.sizeDelta.x, colliderTransform.sizeDelta.y);
+        gameObject.transform.position = pointer.NowWorldPosition;
+    }
+
+    private void SetScanningPlanet(IPlanet planet)
+    {
+        scanningPlanet = planet;
+    }
+
+    private void SetSeePOIs(List<IPointOfInterest> POIs)
+    {
+        seePointValues.Clear();
+        foreach (IPointOfInterest poi in POIs)
+        {
+            if (poi == null)
+                continue;
+            seePointValues.Add(poi, 0.0f);
         }
     }
 }
