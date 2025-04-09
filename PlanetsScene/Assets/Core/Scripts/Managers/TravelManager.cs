@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Space_Screen;
 
 public interface ITravelManager
 {

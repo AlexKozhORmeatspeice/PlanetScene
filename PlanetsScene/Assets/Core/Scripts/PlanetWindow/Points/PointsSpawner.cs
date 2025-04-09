@@ -5,131 +5,98 @@ using System.Linq;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
+using Space_Screen;
 using Random = UnityEngine.Random;
 
-public interface IPointsSpawner
+namespace Planet_Window
 {
-    event Action<List<IPointOfInterest>> onUpdatePOIList;
-    Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet { get; }
-}
-
-public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposable
-{
-    [Inject] private IPointOfInterestFactory pointFactory;
-    [Inject] private IPlanetWindow planetWindow;
-    [Inject] private ITravelManager travelManager;
-    [SerializeField] private RectTransform _rectTransform;
-
-    private Dictionary<IPlanet, List<IPointOfInterest>> pointsByPlanet;
-    private Dictionary<IPlanet, bool> setStatusByPlanet;
-
-    private IPlanet nowPlanet;
-
-    public event Action<List<IPointOfInterest>> onUpdatePOIList;
-
-    public Dictionary<IPlanet, List<IPointOfInterest>> PointsByPlanet => pointsByPlanet;
-
-    public void Start()
+    public interface IPointsSpawner
     {
-        //
+        Vector3 GetRandomPositionInCircle();
     }
 
-    public void Initialize()
+    public class PointsSpawner : MonoBehaviour, IPointsSpawner, IStartable, IDisposable
     {
-        pointsByPlanet = new Dictionary<IPlanet, List<IPointOfInterest>>();
-        setStatusByPlanet = new Dictionary<IPlanet, bool>();
+        [Inject] private IObjectResolver objectResolver;
+        [Inject] private IPointOfInterestFactory pointFactory;
+        [Inject] private IPlanetWindow planetWindow;
+        [Inject] private ITravelManager travelManager;
+        [SerializeField] private RectTransform _rectTransform;
 
-        planetWindow.onEnable += SetPlanet;
-        planetWindow.onEnable += SpawnPoints;
-        planetWindow.onEnable += ShowPoints;
-        planetWindow.onDisable += HidePoints;
-    }
+        private Dictionary<IPlanet, List<IPOIObserver>> pointsByPlanet;
+        private Dictionary<IPlanet, bool> setStatusByPlanet;
 
-    public void Dispose()
-    {
-        pointsByPlanet.Clear();
-        setStatusByPlanet.Clear();
+        private IPlanet nowPlanet;
 
-        planetWindow.onEnable -= SetPlanet;
-        planetWindow.onEnable -= SpawnPoints;
-        planetWindow.onEnable -= ShowPoints;
-        planetWindow.onDisable -= HidePoints;
-    }
-
-    public void SetPlanet()
-    {
-        nowPlanet = travelManager.nowPlanet;
-
-        if (pointsByPlanet.ContainsKey(nowPlanet))
-            return;
-
-        pointsByPlanet[nowPlanet] = new List<IPointOfInterest>();
-
-        foreach (PointInfo info in nowPlanet.PointInfos)
+        public void Start()
         {
-            PointInfo newInfo = info;
-            newInfo.planet = nowPlanet;
-
-            IPointOfInterest point = pointFactory.Create(newInfo, gameObject.transform);
-
-            pointsByPlanet[nowPlanet].Add(point);
+            //
         }
 
-        setStatusByPlanet[nowPlanet] = false;
-
-        onUpdatePOIList?.Invoke(pointsByPlanet[nowPlanet]);
-    }
-
-    private void SpawnPoints() //надо будет доделать, чтобы точки спаунились случайно, но не близко к друг другу
-    {
-        if (nowPlanet == null || setStatusByPlanet[nowPlanet])
-            return;
-
-        foreach(IPointOfInterest point in pointsByPlanet[nowPlanet])
+        public void Initialize()
         {
-            point.SetPosition(GetRandomPositionInCircle());
+            pointsByPlanet = new Dictionary<IPlanet, List<IPOIObserver>>();
+            setStatusByPlanet = new Dictionary<IPlanet, bool>();
+
+            travelManager.onTravelToPlanet += SetPlanetPOIs;
         }
 
-        setStatusByPlanet[nowPlanet] = true;
-    }
-
-    private Vector3 GetRandomPositionInBox()
-    {
-        float posX = Random.Range(_rectTransform.anchorMin.x, _rectTransform.anchorMax.x);
-        float posY = Random.Range(_rectTransform.anchorMin.y, _rectTransform.anchorMax.y);
-
-        return new Vector3(posX, posY, 0);
-    }
-    private Vector3 GetRandomPositionInCircle()
-    {
-        Vector3 pivot = _rectTransform.position;
-
-        float radius = _rectTransform.sizeDelta.magnitude - 1.0f;
-        Vector3 randomDir = Random.insideUnitCircle.normalized * Random.Range(0.0f, radius);
-        
-        return pivot + randomDir;
-    }
-
-
-    private void ShowPoints()
-    {
-        foreach(IPointOfInterest point in pointsByPlanet[nowPlanet])
+        public void Dispose()
         {
-            point.SetSpriteVisability(point.IsVisible);
-            point.SetInterective(point.IsVisible);
-            point.SetScanerDetection(true);
+            foreach (var planet in pointsByPlanet.Keys)
+            {
+                foreach(var point in pointsByPlanet[planet])
+                {
+                    point.Disable();
+                }
+            }
+
+            pointsByPlanet.Clear();
+            setStatusByPlanet.Clear();
+
+            travelManager.onTravelToPlanet -= SetPlanetPOIs;
+        }
+
+        public void SetPlanetPOIs(IPlanet planet)
+        {
+            nowPlanet = planet;
+
+            if (pointsByPlanet.ContainsKey(nowPlanet))
+                return;
+
+            pointsByPlanet[nowPlanet] = new List<IPOIObserver>();
+
+            foreach (PointInfo info in nowPlanet.PointInfos)
+            {
+                PointInfo newInfo = info;
+                newInfo.planet = nowPlanet;
+
+                IPointOfInterest point = pointFactory.Create(newInfo, gameObject.transform);
+                IPOIObserver observer = new POIObserver(point, this);
+                objectResolver.Inject(observer);
+                observer.Enable();
+                
+                pointsByPlanet[nowPlanet].Add(observer);
+            }
+
+            setStatusByPlanet[nowPlanet] = false;
+        }
+
+        private Vector3 GetRandomPositionInBox()
+        {
+            float posX = Random.Range(_rectTransform.anchorMin.x, _rectTransform.anchorMax.x);
+            float posY = Random.Range(_rectTransform.anchorMin.y, _rectTransform.anchorMax.y);
+
+            return new Vector3(posX, posY, 0);
+        }
+        public Vector3 GetRandomPositionInCircle()
+        {
+            Vector3 pivot = _rectTransform.position;
+
+            float radius = _rectTransform.sizeDelta.magnitude - 1.0f;
+            Vector3 randomDir = Random.insideUnitCircle.normalized * Random.Range(0.0f, radius);
+
+            return pivot + randomDir;
         }
     }
-
-    private void HidePoints()
-    {
-        foreach (IPointOfInterest point in pointsByPlanet[nowPlanet])
-        {
-            point.SetSpriteVisability(false);
-            point.SetInterective(false);
-            point.SetScanerDetection(false);
-        }
-    }
-
 }

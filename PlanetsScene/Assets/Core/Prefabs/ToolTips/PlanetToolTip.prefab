@@ -144,7 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4043532362842806002}
-  - component: {fileID: 9032298972520831848}
+  - component: {fileID: 8185243596313423113}
   m_Layer: 5
   m_Name: PlanetToolTip
   m_TagString: Untagged
@@ -173,7 +173,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 650, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &9032298972520831848
+--- !u!114 &8185243596313423113
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,10 +182,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3189334729191059313}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c3777fb6624ef44da74fdbda7ce417d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6eede6c1d089c6848bb59c75d5cf0bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toolTipView: {fileID: 8827162386479215123}
+  titleText: {fileID: 7719714176519497937}
+  secondTitleText: {fileID: 0}
+  descText: {fileID: 6901182203646289308}
+  iconRect: {fileID: 3437075440232547237}
 --- !u!1 &3234191692400322710
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,8 +224,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.8016667}
-  m_AnchoredPosition: {x: -0.000030517578, y: 26.597458}
-  m_SizeDelta: {x: 0, y: 53.194984}
+  m_AnchoredPosition: {x: -0.000030517578, y: 10.483}
+  m_SizeDelta: {x: 0, y: 20.965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3902167977201620127
 CanvasRenderer:
@@ -296,7 +299,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.75
+  m_fontSize: 20.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -332,7 +335,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 14.982597, y: 9.418698, z: 8.029816, w: 5.9686136}
+  m_margin: {x: 14.982597, y: 9.418743, z: 8.029816, w: 5.9686136}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -348,10 +351,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3437075440232547237}
   - component: {fileID: 3899024334451670283}
-  - component: {fileID: 8827162386479215123}
-  - component: {fileID: 6759532258168625262}
+  - component: {fileID: 6042004915449889264}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: <img> bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -387,7 +389,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4829174458427910996}
   m_CullTransparentMesh: 1
---- !u!114 &8827162386479215123
+--- !u!114 &6042004915449889264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -396,22 +398,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4829174458427910996}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb1c0cdaf9143b240843e017e89dfff7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  titleText: {fileID: 7719714176519497937}
-  secondTitleText: {fileID: 0}
-  descText: {fileID: 6901182203646289308}
---- !u!114 &6759532258168625262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4829174458427910996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -422,10 +409,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 9a285a35a26fc634986dd490ca4ee7b4, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+  m_Sprite: {fileID: 21300000, guid: 9a285a35a26fc634986dd490ca4ee7b4, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1

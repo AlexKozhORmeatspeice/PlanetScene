@@ -6,31 +6,35 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-public interface INotFound
+namespace Planet_Window
 {
-
-}
-
-public class NotFound : MonoBehaviour, INotFound, IStartable, IDisposable
-{
-    private IPlanetWindow_NotFoundObserver observer;
-    [SerializeField] private PlanetWindow_NotFound view;
-
-    [Inject]
-    public void Construct(IObjectResolver resolver)
+    public interface INotFound
     {
-        resolver.Inject(observer = new PlanetWindow_NotFoundObserver(view));
-    }
-    public void Initialize()
-    {
-        observer.Enable();
+
     }
 
-    public void Dispose()
+    public class NotFound : MonoBehaviour, INotFound, IStartable, IDisposable
     {
-        observer.Disable();
+        private INotFoundObserver observer;
+        [SerializeField] private PlanetWindow_NotFound view;
+
+        [Inject]
+        public void Construct(IObjectResolver resolver)
+        {
+            resolver.Inject(observer = new NotFoundObserver(view));
+        }
+        public void Initialize()
+        {
+            observer.Enable();
+        }
+
+        public void Dispose()
+        {
+            observer.Disable();
+        }
+
+
+        public void Start() { }
     }
 
-
-    public void Start() { }
 }

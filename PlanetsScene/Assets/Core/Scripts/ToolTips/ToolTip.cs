@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
@@ -9,49 +10,115 @@ using VContainer.Unity;
 
 public interface IToolTip
 {
-    void Enable(string title = "", string lable = "", string text = "");
-    void Enable();
-    void Disable();
+    void Show();
+    void Hide();
+
+    string Name { set; }
+    string Lable { set; }
+    string Description { set; }
+
+    Vector3 Position { get; set; }
+    Vector3 IconPos { get; set; }
+    Vector2 WorldSize { get; }
+    Vector2 ScreenSize { get; }
+    Vector3 StartOffset { get; }
 }
 
-public class MouseMoveToolTip : MonoBehaviour, IToolTip, ITickable, IDisposable
+public class ToolTip : MonoBehaviour, IToolTip, IStartable
 {
-    [SerializeField] private ToolTipView toolTipView;
-    [Inject] private IPointerManager pointer;
+    [Header("Info")]
+    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text secondTitleText;
+    [SerializeField] private TMP_Text descText;
 
-    protected IToolTipObserver toolTipPresenter;
+    [SerializeField] private RectTransform iconRect;
+    private RectTransform selfRect;
+    private Vector3 startOffset;
 
-    [Inject]
-    public void Construct(IObjectResolver resolver)
+    public string Name
     {
-        resolver.Inject(toolTipPresenter = new ToolTipObserver(toolTipView));
+        set
+        {
+            if (titleText == null)
+                return;
 
-        Disable();
+            titleText.text = value;
+        }
     }
 
-    public void Dispose()
+    public string Description
     {
-        Disable();
-    }
-    public virtual void Tick()
-    {
-        if (this == null)
-            return;
+        set
+        {
+            if (descText == null)
+                return;
 
-        gameObject.transform.position = pointer.NowWorldPosition;
+            descText.text = value;
+        }
+    }
+    public string Lable
+    {
+        set
+        {
+            if (secondTitleText == null)
+                return;
+
+            secondTitleText.text = value;
+        }
     }
 
-    public void Enable(string title, string lable, string text)
+    public Vector2 WorldSize
     {
-        toolTipPresenter.Enable(title, lable, text);
+        get
+        {
+            float distX = Mathf.Abs(iconRect.lossyScale.x);
+            float distY = Mathf.Abs(iconRect.lossyScale.y);
+            
+            return new Vector2(distX, distY);
+        }
     }
 
-    public void Enable()
+
+    public Vector2 ScreenSize
     {
-        toolTipPresenter.Enable();
+        get
+        {
+            float distX = 2.0f * Mathf.Abs(iconRect.sizeDelta.x);
+            float distY = 2.0f * Mathf.Abs(iconRect.sizeDelta.y);
+
+            return new Vector2(distX, distY);
+        }
     }
-    public void Disable()
+
+    public Vector3 Position 
     {
-        toolTipPresenter.Disable();
+        get => gameObject.transform.position;
+        set => gameObject.transform.position = value;
     }
+
+    public Vector3 IconPos
+    {
+        get => iconRect.position;
+        set => iconRect.position = value;
+    }
+
+    public Vector3 StartOffset => startOffset;
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void Initialize()
+    {
+        selfRect = GetComponent<RectTransform>();
+        startOffset = iconRect.position - selfRect.position;
+    }
+
+    public void Start() {}
 }

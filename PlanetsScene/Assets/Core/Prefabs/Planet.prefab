@@ -530,8 +530,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3469048516904388545}
   - component: {fileID: 7074464099779113237}
-  - component: {fileID: 3481053048248692817}
-  - component: {fileID: 1463283836420111441}
   - component: {fileID: 4325862626181143651}
   - component: {fileID: 6391155277898452076}
   - component: {fileID: 921954556367859599}
@@ -577,43 +575,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6a33c5f88f2cb4da399ec93ff3e37a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  view: {fileID: 3481053048248692817}
-  planetName: Abracadabra
-  sector: 
-  description: 
-  points: []
---- !u!114 &3481053048248692817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600134331682246242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 059821614cc8bc749a111b446170d5e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   rectTransformPlanet: {fileID: 3469048516904388545}
-  closeSize: {x: 200, y: 200}
+  closeSize: {x: 150, y: 150}
   openSize: {x: 300, y: 300}
   buttonBg: {fileID: 6141444730849999673}
   buttonText: {fileID: 1624009389449781905}
   nameBg: {fileID: 6022265023352371461}
   txtName: {fileID: 2093668917083781273}
   backgroundImage: {fileID: 1265970642142688407}
---- !u!114 &1463283836420111441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600134331682246242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13a67812699f0934aa7e16cc96179664, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  planetName: Abracadabra
+  sector: 
+  description: 
+  points: []
 --- !u!222 &4325862626181143651
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -1,38 +1,45 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
+using Planet_Window;
 
-public interface ISpaceWindow
+namespace Space_Screen
 {
-
-}
-
-public class SpaceWindow : MonoBehaviour, ISpaceWindow, IDisposable
-{
-    [SerializeField] private GameObject PlanetsContent;
-    private List<IPlanet> planetUIs;
-
-    [Inject]
-    public void Construct(IObjectResolver resolver, ITravelManager travelManager, IPlanetWindow planetWindow)
+    public interface ISpaceWindow
     {
-        planetUIs = PlanetsContent.GetComponentsInChildren<IPlanet>().ToList();
-        foreach(var planet in planetUIs)
+
+    }
+
+    public class SpaceWindow : MonoBehaviour, ISpaceWindow, IDisposable
+    {
+        [SerializeField] private GameObject planetsContent;
+        private List<IPlanetObserver> planetObservers;
+
+        [Inject]
+        public void Construct(IObjectResolver resolver)
         {
-            resolver.Inject(planet);
-            planet.Init(resolver, travelManager, planetWindow);
+            planetObservers = new List<IPlanetObserver>();
+
+            var planets = planetsContent.GetComponentsInChildren<IPlanet>().ToList();
+            foreach (var planet in planets)
+            {
+                var planetObserver = new PlanetObserver(planet);
+                resolver.Inject(planetObserver);
+                planetObserver.Enable();
+                planetObservers.Add(planetObserver);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var planet in planetObservers)
+            {
+                planet.Disable();
+            }
+            planetObservers.Clear();
         }
     }
 
-    public void Dispose()
-    {
-        foreach(var planet in planetUIs)
-        {
-            planet.Disable();
-        }
-    }
 }

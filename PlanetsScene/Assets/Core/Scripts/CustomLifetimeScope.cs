@@ -1,5 +1,8 @@
 using VContainer;
 using VContainer.Unity;
+using Space_Screen;
+using Planet_Window;
+using Top_Bar;
 
 public class CustomLifetimeScope : LifetimeScope
 {
@@ -15,22 +18,22 @@ public class CustomLifetimeScope : LifetimeScope
 
         PlanetWindowInit(builder);
 
-        SectorWindowInit(builder);
+        SectorScreenInit(builder);
 
         TopPartWindowInit(builder);
     }
 
-    private void SectorWindowInit(IContainerBuilder builder)
+    private void SectorScreenInit(IContainerBuilder builder)
     {
-        builder.RegisterComponentInHierarchy<PlanetToolTip>()
-            .AsImplementedInterfaces()
-            .AsSelf();
-
         builder.RegisterComponentInHierarchy<SpaceWindow>()
             .AsImplementedInterfaces()
             .AsSelf();
 
         builder.RegisterComponentInHierarchy<PlanetTooltipSystem>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
+        builder.RegisterComponentInHierarchy<ToolTip>()
             .AsImplementedInterfaces()
             .AsSelf();
 
@@ -41,7 +44,7 @@ public class CustomLifetimeScope : LifetimeScope
 
     private void TopPartWindowInit(IContainerBuilder builder)
     {
-        builder.RegisterComponentInHierarchy<TopPartWindow>()
+        builder.RegisterComponentInHierarchy<TopBar>()
             .AsImplementedInterfaces()
             .AsSelf();
     }
@@ -49,10 +52,6 @@ public class CustomLifetimeScope : LifetimeScope
     private void PlanetWindowInit(IContainerBuilder builder)
     {
         builder.RegisterComponentInHierarchy<PlanetWindow>()
-            .AsImplementedInterfaces()
-            .AsSelf();
-
-        builder.RegisterComponentInHierarchy<POIToolTip>()
             .AsImplementedInterfaces()
             .AsSelf();
 

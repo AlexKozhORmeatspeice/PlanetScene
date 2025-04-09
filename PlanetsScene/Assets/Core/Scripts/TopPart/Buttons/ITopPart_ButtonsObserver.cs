@@ -1,30 +1,46 @@
-﻿using VContainer;
+﻿using Planet_Window;
+using Space_Screen;
+using VContainer;
 
-internal interface ITopPart_ButtonsObserver
+
+namespace Top_Bar
 {
-    void Enable();
-    void Disable();
-}
-
-public class TopPart_ButtonsObserver : ITopPart_ButtonsObserver
-{
-    [Inject] private IScaner scaner;
-    private ITopPart_ButtonsView view;
-
-    public TopPart_ButtonsObserver(TopPart_ButtonsView view)
+    internal interface ITopPart_ButtonsObserver
     {
-        this.view = view;
+        void Enable();
+        void Disable();
     }
 
-    public void Enable()
+    public class TopPart_ButtonsObserver : ITopPart_ButtonsObserver
     {
-        scaner.onScanerEnable += view.Disable;
-        scaner.onScanerDisable += view.Enable;
-    }
+        [Inject] private IScaner scaner;
+        private ITopBar topBar;
 
-    public void Disable()
-    {
-        scaner.onScanerEnable -= view.Disable;
-        scaner.onScanerDisable -= view.Enable;
+        public TopPart_ButtonsObserver(ITopBar topBar)
+        {
+            this.topBar = topBar;
+        }
+
+        public void Enable()
+        {
+            scaner.onScanerEnable += SetButtonsInvisible;
+            scaner.onScanerDisable += SetButtonsVisible;
+        }
+
+        public void Disable()
+        {
+            scaner.onScanerEnable -= SetButtonsInvisible;
+            scaner.onScanerDisable -= SetButtonsVisible;
+        }
+
+        private void SetButtonsVisible()
+        {
+            topBar.SetButtonsVisability(true);
+        }
+
+        private void SetButtonsInvisible()
+        {
+            topBar.SetButtonsVisability(false);
+        }
     }
 }

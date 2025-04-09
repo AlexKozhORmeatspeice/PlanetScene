@@ -2,157 +2,168 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using DG.Tweening;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-public interface IPointOfInterest : IScreenObject
+
+namespace Planet_Window
 {
-    void SetInfo(PointInfo info);
-    void SetVisibility(bool visibility);
-    void SetInterective(bool interective);
-    void SetScanerDetection(bool scanerDetection);
-    void SetSpriteVisability(bool visibility);
-    void SetPosition(Vector3 position);
-
-    bool IsVisible { get; }
-    bool IsInteractive { get; }
-
-    PointInfo GetInfo { get; }
-
-    GameObject GameObject { get; }
-}
-
-public class PointOfInterest : MonoBehaviour, IPointOfInterest, IDisposable //TODO: объединить с POIInteraction
-{
-    [Inject] private IScaner scaner;
-    [Inject] private IPlanetWindow planetWindow;
-    [Inject] private IDrone drone;
-
-    [SerializeField] private BoxCollider2D collider2d;
-    [SerializeField] private PlanetWindow_POIView view;
-
-    private IPlanetWindow_POIObserver observer;
-    private IGradientObserver gradientObserver;
-
-    private PointInfo info;
-    private bool isVisible = false;
-    private bool isInterective = false;
-    public bool IsVisible => isVisible;
-
-    public GameObject GameObject => gameObject;
-
-    public string Name => info.nameOfPoint;
-
-    public Vector3 Position => gameObject.transform.position;
-
-    public Vector3 Size => gameObject.transform.localScale;
-
-    public PointInfo GetInfo => info;
-
-    public bool IsInteractive => isInterective;
-
-    [Inject]
-    public void Construct(IObjectResolver resolver)
+    public interface IPointOfInterest
     {
-        resolver.Inject(observer = new PlanetWindow_POIObserver(view, this));
-        resolver.Inject(gradientObserver = new MouseMoveGradientObserver(view, this));
+        void SetInfo(PointInfo info);
+        
+        void SetVisibility(bool visibility);
+        void Hide();
+        void Show();
+        void ChangeScale(float t01);
+        void ChangeScale(bool isMax);
+        void SetIcon(Texture texture);
+        void SetScanerDetection(bool scanerDetection);
 
-        drone.onLand += SetPOIActive;
-        scaner.onChangeIsScanning += SetNotInterective; 
+        void SetPosition(Vector3 position);
+
+        string Name { get; }
+        Vector3 Position { get; }
+        Vector3 Size { get; }
+
+        bool IsVisible { get; }
+        bool CanScanerSee { get; }
+
+        PointInfo GetInfo { get; }
+
+        GameObject GameObject { get; }
+        void PlayActivationAnim();
     }
 
-    public void Dispose()
+    public class PointOfInterest : MonoBehaviour, IPointOfInterest, IScreenObject //TODO: объединить с POIInteraction
     {
-        drone.onLand -= SetPOIActive;
-        scaner.onChangeIsScanning -= SetNotInterective;
-        Disable();
-    }
+        [Header("Size")]
+        [SerializeField] private Vector2 minSize;
+        [SerializeField] private Vector2 maxSize;
 
-    public void SetInfo(PointInfo info)
-    {
-        this.info = info;
-        SetVisibility(info.isVisible);
-    }
+        [Header("Objs")]
+        [SerializeField] private RawImage icon;
+        [SerializeField] private RawImage bg1;
+        [SerializeField] private RawImage bg2;
+        [SerializeField] private RectTransform rectTransform;
 
-    public void SetInterective(bool interective)
-    {
-        Debug.Log(interective);
-        isInterective = interective;
-        if (interective)
+        [Header("Color")]
+        [SerializeField] private Color closedBgColor;
+        [SerializeField] private Color openBgColor;
+
+        [SerializeField] private Color closedIconColor;
+        [SerializeField] private Color openIconColor;
+
+        [SerializeField] private BoxCollider2D collider2d;
+
+        private PointInfo info;
+        private bool isPlayingAnim;
+
+        public bool IsVisible => bg1.gameObject.activeSelf;
+
+        public GameObject GameObject => gameObject;
+
+        public string Name => info.nameOfPoint;
+
+        public Vector3 Position => gameObject.transform.position;
+
+        public Vector3 Size => gameObject.transform.localScale;
+
+        public PointInfo GetInfo => info;
+
+        public bool CanScanerSee => collider2d.enabled;
+
+        public void SetInfo(PointInfo info)
         {
-            Enable();
+            this.info = info;
+
+            SetIcon(info.icon);
+            SetVisibility(info.isVisible);
         }
-        else
+
+        public void SetPosition(Vector3 position)
         {
-            Disable();
+            gameObject.transform.position = position;
         }
-    }
-    public void SetNotInterective(bool notInterective)
-    {
-        SetInterective(!notInterective);
-    }
-    public void SetPosition(Vector3 position)
-    {
-        gameObject.transform.position = position;
-    }
 
-    public void SetScanerDetection(bool scanerDetection)
-    {
-        collider2d.enabled = scanerDetection;
-    }
-
-    public void SetSpriteVisability(bool visibility)
-    {
-        if(visibility)
+        public void SetScanerDetection(bool scanerDetection)
         {
-            observer.Enable();
+            collider2d.enabled = scanerDetection;
         }
-        else
+
+        public void SetVisibility(bool visibility)
         {
-            observer.Disable();
+            if(visibility)
+            {
+                Show();
+            }    
+            else
+            {
+                Hide();
+            }
         }
-    }
 
-    public void SetVisibility(bool visibility)
-    {
-        isVisible = visibility;
-        SetSpriteVisability(isVisible);
-    }
+        public void Show()
+        {
+            info.isVisible = true;
+            bg1.gameObject.SetActive(true);
+        }
 
-    private void SetPOIActive(Vector3 pos, IPointOfInterest poi)
-    {        
-        if (this != poi)
-            return;
+        public void Hide()
+        {
+            bg1.gameObject.SetActive(false);
+        }
 
-        SetVisibility(true);
-        SetInterective(true);
-    }
+        public void SetIcon(Texture texture)
+        {
+            if (texture == null)
+                return;
 
-    private void Enable()
-    {
-        gradientObserver.Enable();
-        gradientObserver.SetInterective();
+            icon.texture = texture;
+        }
 
-        planetWindow.onEnable += gradientObserver.SetNotInterective;
-        planetWindow.onDisable += gradientObserver.SetInterective;
+        public void ChangeScale(float t01)
+        {
+            if (rectTransform == null || isPlayingAnim)
+                return;
 
-        scaner.onScanerEnable += gradientObserver.SetNotInterective;
-        scaner.onScanerDisable += gradientObserver.SetInterective;
-    }
+            t01 = Mathf.Clamp01(t01);
 
-    private void Disable()
-    {
-        gradientObserver.Disable();
-        gradientObserver.SetNotInterective();
+            rectTransform.sizeDelta = maxSize * t01 + minSize * (1.0f - t01);
 
-        planetWindow.onEnable -= gradientObserver.SetNotInterective;
-        planetWindow.onDisable -= gradientObserver.SetInterective;
+            SetColors(t01);
+        }
 
-        scaner.onScanerEnable -= gradientObserver.SetNotInterective;
-        scaner.onScanerDisable -= gradientObserver.SetInterective;
+        public void ChangeScale(bool isMax)
+        {
+            ChangeScale(isMax ? 1.0f : 0.0f);
+        }
+
+        public void PlayActivationAnim()
+        {
+            isPlayingAnim = true;
+
+            SetColors(1f);
+            rectTransform.sizeDelta = Vector2.zero;
+            SetVisibility(true);
+
+            rectTransform.DOSizeDelta(maxSize, 0.35f).SetEase(Ease.OutBounce).
+                OnComplete(() =>
+                {
+                    isPlayingAnim = false;
+                });
+        }
+        private void SetColors(float alpha)
+        {
+            bg1.color = Color.Lerp(closedBgColor, openBgColor, alpha);
+            bg2.color = Color.Lerp(closedBgColor, openBgColor, alpha);
+            icon.color = Color.Lerp(closedIconColor, openIconColor, alpha);
+        }
     }
 }

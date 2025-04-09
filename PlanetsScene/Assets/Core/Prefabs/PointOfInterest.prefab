@@ -54,8 +54,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d304f069811d8b54da9110a741186dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minSize: {x: 80, y: 80}
+  maxSize: {x: 100, y: 100}
+  icon: {fileID: 4616697493182355387}
+  bg1: {fileID: 8389844933139414295}
+  bg2: {fileID: 1332791713403025095}
+  rectTransform: {fileID: 2257545153907283157}
+  closedBgColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
+  openBgColor: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 1}
+  closedIconColor: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
+  openIconColor: {r: 0.7735849, g: 0.4780171, b: 0.4780171, a: 1}
   collider2d: {fileID: 24517410251592429}
-  view: {fileID: 432679510708360316}
 --- !u!50 &3176312011406343508
 Rigidbody2D:
   serializedVersion: 4
@@ -319,7 +328,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8686378490043747838}
   - component: {fileID: 8943462455426858746}
-  - component: {fileID: 432679510708360316}
   - component: {fileID: 8389844933139414295}
   m_Layer: 5
   m_Name: <img> PointBg
@@ -358,28 +366,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8922153872756695026}
   m_CullTransparentMesh: 1
---- !u!114 &432679510708360316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8922153872756695026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37eb4d4e6111b354c825a899e8a51569, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minSize: {x: 100, y: 100}
-  maxSize: {x: 150, y: 150}
-  icon: {fileID: 4616697493182355387}
-  bg1: {fileID: 8389844933139414295}
-  bg2: {fileID: 1332791713403025095}
-  rectTransform: {fileID: 2257545153907283157}
-  closedBgColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  openBgColor: {r: 1, g: 1, b: 1, a: 1}
-  closedIconColor: {r: 0.15294118, g: 0.18039216, b: 0.30980393, a: 1}
-  openIconColor: {r: 0.7764706, g: 0.8117647, b: 0.8627451, a: 1}
 --- !u!114 &8389844933139414295
 MonoBehaviour:
   m_ObjectHideFlags: 0

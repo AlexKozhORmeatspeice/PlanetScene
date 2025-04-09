@@ -280,7 +280,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9157896016887834699}
-  - component: {fileID: 7243816823149786990}
+  - component: {fileID: 3666557471897437516}
   m_Layer: 5
   m_Name: POIToolTip
   m_TagString: Untagged
@@ -309,7 +309,7 @@ RectTransform:
   m_AnchoredPosition: {x: 34.69, y: 568.3}
   m_SizeDelta: {x: 650, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7243816823149786990
+--- !u!114 &3666557471897437516
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -318,10 +318,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3755452942142977419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6afdb0a7aa55f642ac55a4fc4c43187, type: 3}
+  m_Script: {fileID: 11500000, guid: 6eede6c1d089c6848bb59c75d5cf0bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toolTipView: {fileID: 4010034082972251795}
+  titleText: {fileID: 1897716863282459596}
+  secondTitleText: {fileID: 3679428653922173023}
+  descText: {fileID: 7012250165494241196}
+  iconRect: {fileID: 97298622404810507}
 --- !u!1 &4599905763064008691
 GameObject:
   m_ObjectHideFlags: 0
@@ -541,8 +544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 97298622404810507}
   - component: {fileID: 1599091474035023671}
-  - component: {fileID: 4010034082972251795}
-  - component: {fileID: 1487929407036399513}
+  - component: {fileID: 5597125651265800096}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -582,7 +584,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5979600614064063598}
   m_CullTransparentMesh: 1
---- !u!114 &4010034082972251795
+--- !u!114 &5597125651265800096
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -591,22 +593,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5979600614064063598}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb1c0cdaf9143b240843e017e89dfff7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  titleText: {fileID: 1897716863282459596}
-  secondTitleText: {fileID: 3679428653922173023}
-  descText: {fileID: 7012250165494241196}
---- !u!114 &1487929407036399513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5979600614064063598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -617,10 +604,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: c5f1fec78832a394abb49054be9ca905, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+  m_Sprite: {fileID: 21300000, guid: c5f1fec78832a394abb49054be9ca905, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
