@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Space_Screen;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using VContainer;
@@ -19,8 +20,9 @@ namespace Planet_Window
     public class POIMouseEvents : MonoBehaviour, IPOIMouseEvents, ITickable, IStartable, IDisposable
     {
         [Inject] private IPointerManager pointer;
-        private bool isEntered;
-        private IPointOfInterest nowObj;
+        private IPointOfInterest hoveredPOI;
+        private PointerEventData eventData;
+        private List<RaycastResult> raycastList = new();
 
         public event Action<IPointOfInterest> OnMouseEnter;
         public event Action<IPointOfInterest> OnMouseLeave;
@@ -30,40 +32,59 @@ namespace Planet_Window
 
         public void Initialize()
         {
-            isEntered = false;
             pointer.OnDoubleTap += InvokeDoubleClick;
             pointer.OnPointerDown += InvokeClick;
+
+            eventData = new PointerEventData(EventSystem.current);
         }
 
         public void Tick()
         {
-            var eventData = new PointerEventData(EventSystem.current);
+            raycastList.Clear();
             eventData.position = Input.mousePosition;
-            var results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
+            EventSystem.current.RaycastAll(eventData, raycastList);
 
-            if (results.Count > 0 && results[0].gameObject.GetComponent<IPointOfInterest>() != null)
+            if (raycastList.Count == 0)
             {
-                IPointOfInterest newPlanet = results[0].gameObject.GetComponent<IPointOfInterest>();
-                if (newPlanet == null)
-                    return;
-
-                if (nowObj == null && !isEntered)
+                if (hoveredPOI != null)
                 {
-                    nowObj = newPlanet;
-                    isEntered = true;
+                    OnMouseLeave?.Invoke(hoveredPOI);
+                    hoveredPOI = null;
+                }
+                return;
+            }
 
-                    OnMouseEnter?.Invoke(nowObj);
+            IPointOfInterest newPOI = null;
+            foreach (RaycastResult result in raycastList)
+            {
+                if (result.gameObject.TryGetComponent(out newPOI))
+                {
+                    break;
+                }
+            }
+
+            if (newPOI == null)
+            {
+                if (hoveredPOI != null)
+                {
+                    OnMouseLeave?.Invoke(hoveredPOI);
+                    hoveredPOI = null;
+                }
+                return;
+            }
+
+            if (hoveredPOI != newPOI)
+            {
+                if (hoveredPOI != null)
+                {
+                    OnMouseLeave?.Invoke(hoveredPOI);
                 }
 
-                OnMouseMove?.Invoke(nowObj);
+                hoveredPOI = newPOI;
+                OnMouseEnter?.Invoke(hoveredPOI);
             }
-            else if (isEntered)
-            {
-                isEntered = false;
-                nowObj = default;
-                OnMouseLeave?.Invoke(nowObj);
-            }
+
+            OnMouseMove?.Invoke(hoveredPOI);
         }
         public void Dispose()
         {
@@ -73,17 +94,17 @@ namespace Planet_Window
 
         private void InvokeClick()
         {
-            if (nowObj == null)
+            if (hoveredPOI == null)
                 return;
 
-            OnMouseClick?.Invoke(nowObj);
+            OnMouseClick?.Invoke(hoveredPOI);
         }
         private void InvokeDoubleClick()
         {
-            if (nowObj == null)
+            if (hoveredPOI == null)
                 return;
 
-            OnMouseDoubleClick?.Invoke(nowObj);
+            OnMouseDoubleClick?.Invoke(hoveredPOI);
         }
 
         public void Start()

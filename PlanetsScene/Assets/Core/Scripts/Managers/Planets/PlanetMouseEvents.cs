@@ -19,8 +19,9 @@ namespace Space_Screen
     public class PlanetMouseEvents : MonoBehaviour, IPlanetMouseEvents, ITickable, IStartable, IDisposable
     {
         [Inject] private IPointerManager pointer;
-        private bool isEntered;
-        private IPlanet nowObj;
+        private IPlanet hoveredPlanet;
+        private PointerEventData eventData;
+        private List<RaycastResult> raycastList = new();
 
         public event Action<IPlanet> OnMouseEnter;
         public event Action<IPlanet> OnMouseLeave;
@@ -30,40 +31,59 @@ namespace Space_Screen
 
         public void Initialize()
         {
-            isEntered = false;
             pointer.OnDoubleTap += InvokeDoubleClick;
             pointer.OnPointerDown += InvokeClick;
+        
+            eventData = new PointerEventData(EventSystem.current);
         }
 
         public void Tick()
         {
-            var eventData = new PointerEventData(EventSystem.current);
+            raycastList.Clear();
             eventData.position = Input.mousePosition;
-            var results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
+            EventSystem.current.RaycastAll(eventData, raycastList);
 
-            if (results.Count > 0 && results[0].gameObject.GetComponent<IPlanet>() != null)
+            if(raycastList.Count == 0)
             {
-                IPlanet newPlanet = results[0].gameObject.GetComponent<IPlanet>();
-                if (newPlanet == null)
-                    return;
-
-                if (nowObj == null && !isEntered)
+                if(hoveredPlanet != null)
                 {
-                    nowObj = newPlanet;
-                    isEntered = true;
+                    OnMouseLeave?.Invoke(hoveredPlanet);
+                    hoveredPlanet = null;
+                }
+                return;
+            }
 
-                    OnMouseEnter?.Invoke(nowObj);
+            IPlanet newPlanet = null;
+            foreach(RaycastResult result in raycastList)
+            {
+                if(result.gameObject.TryGetComponent(out newPlanet))
+                {
+                    break;
+                }
+            }
+
+            if(newPlanet == null)
+            {
+                if (hoveredPlanet != null)
+                {
+                    OnMouseLeave?.Invoke(hoveredPlanet);
+                    hoveredPlanet = null;
+                }
+                return;
+            }
+
+            if (hoveredPlanet != newPlanet)
+            {
+                if(hoveredPlanet != null)
+                {
+                    OnMouseLeave?.Invoke(hoveredPlanet);
                 }
 
-                OnMouseMove?.Invoke(nowObj);
+                hoveredPlanet = newPlanet;
+                OnMouseEnter?.Invoke(hoveredPlanet);
             }
-            else if (isEntered)
-            {
-                isEntered = false;
-                nowObj = default;
-                OnMouseLeave?.Invoke(nowObj);
-            }
+
+            OnMouseMove?.Invoke(hoveredPlanet);
         }
         public void Dispose()
         {
@@ -73,17 +93,17 @@ namespace Space_Screen
 
         private void InvokeClick()
         {
-            if (nowObj == null)
+            if (hoveredPlanet == null)
                 return;
 
-            OnMouseClick?.Invoke(nowObj);
+            OnMouseClick?.Invoke(hoveredPlanet);
         }
         private void InvokeDoubleClick()
         {
-            if (nowObj == null)
+            if (hoveredPlanet == null)
                 return;
 
-            OnMouseDoubleClick?.Invoke(nowObj);
+            OnMouseDoubleClick?.Invoke(hoveredPlanet);
         }
 
         public void Start()

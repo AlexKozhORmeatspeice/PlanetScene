@@ -34,6 +34,7 @@ namespace Space_Screen
         public event Action<ScreenSide> onTooltipInScreen;
 
         private Dictionary<ScreenSide, bool> inScreenBySide;
+        private IPlanet nowShowPlanet;
 
         [Inject]
         public void Construct(IObjectResolver resolver)
@@ -77,20 +78,21 @@ namespace Space_Screen
             if (travelManager.IsNowPlanet(planet) || !canEnable)
                 return;
 
+            nowShowPlanet = planet;
             OnPointerEnterPlanet?.Invoke(planet);
         }
 
         private void DisablePlanet(IPlanet planet)
         {
-            if (travelManager.IsNowPlanet(planet))
-                return;
-
             OnPointerLeavePlanet?.Invoke(planet);
         }
 
         private void SetCantShowTooltip(bool isCant)
         {
             canEnable = !isCant;
+
+            if (!canEnable)
+                DisablePlanet(nowShowPlanet);
         }
 
         public void FixedUpdate()

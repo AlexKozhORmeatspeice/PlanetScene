@@ -118,8 +118,6 @@ namespace Planet_Window
             if (!travelManager.IsNowPlanet(poiPlanet))
                 return;
 
-            Debug.Log(isScanning);
-
             view.SetScanerDetection(isScanning);
         }
 
