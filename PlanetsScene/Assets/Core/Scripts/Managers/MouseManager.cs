@@ -8,6 +8,8 @@ using UnityEngine.EventSystems;
 using VContainer;
 using VContainer.Unity;
 
+using Vector2 = UnityEngine.Vector2;
+
 public interface IPointerManager
 {
     event Action OnUpdate;
@@ -81,7 +83,11 @@ public class MouseManager : IPointerManager, ITickable
     private void CalculateSpeed()
     {
         Vector2 nowMousePos = Input.mousePosition;
-        speed = (nowMousePos - lastFrameMousePos).Abs() / Time.deltaTime;
+        Vector2 dl = (nowMousePos - lastFrameMousePos);
+
+        Vector2 dlAbs = new Vector2(Mathf.Abs(dl.x), Mathf.Abs(dl.y));
+        
+        speed = dlAbs / Time.deltaTime;
 
         lastFrameMousePos = nowMousePos;
     }

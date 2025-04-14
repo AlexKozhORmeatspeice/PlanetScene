@@ -19,7 +19,6 @@ namespace Planet_Window
     {
         [Inject] private IObjectResolver objectResolver;
         [Inject] private IPointOfInterestFactory pointFactory;
-        [Inject] private IPlanetWindow planetWindow;
         [Inject] private ITravelManager travelManager;
         [SerializeField] private RectTransform _rectTransform;
 

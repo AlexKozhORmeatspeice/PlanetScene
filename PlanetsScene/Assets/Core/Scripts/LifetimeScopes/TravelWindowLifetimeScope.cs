@@ -4,7 +4,7 @@ using Space_Screen;
 using Planet_Window;
 using Top_Bar;
 
-public class CustomLifetimeScope : LifetimeScope
+public class TravelWindowLifetimeScope : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {

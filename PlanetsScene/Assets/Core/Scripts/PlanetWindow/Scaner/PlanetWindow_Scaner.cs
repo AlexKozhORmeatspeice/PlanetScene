@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using VContainer.Unity;
 
+namespace Planet_Window
+{
+
+}
 public interface IPlanetWindow_Scaner
 {
     bool isVisible { set; }

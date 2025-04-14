@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Space_Screen;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using VContainer;
 using VContainer.Unity;
 
@@ -173,6 +170,7 @@ namespace Planet_Window
             if (lastSeenPointOfInterest == null)
             {
                 drone.Land(nowWorldPos, lastSeenPointOfInterest);
+                SetStatus(false);
                 return;
             }
 
@@ -239,17 +237,6 @@ namespace Planet_Window
         private void SetScanningPlanet(IPlanet planet)
         {
             scanningPlanet = planet;
-        }
-
-        private void SetSeePOIs(List<IPointOfInterest> POIs)
-        {
-            seePointValues.Clear();
-            foreach (IPointOfInterest poi in POIs)
-            {
-                if (poi == null)
-                    continue;
-                seePointValues.Add(poi, 0.0f);
-            }
         }
     }
 
