@@ -41,7 +41,6 @@ namespace Planet_Window
         {
             view.SetStatus(isScanning);
         }
-
     }
 
 }

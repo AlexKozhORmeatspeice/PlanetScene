@@ -56,6 +56,7 @@ namespace Planet_Window
 
         public void Disable()
         {
+            view.SetScanerDetection(false);
             SetNotInterective();
             
             drone.onLand -= SetPOIActive;

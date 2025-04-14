@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Space_Screen;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace Planet_Window
     public interface IScaner
     {
         event Action onScanerEnable;
-        event Action onStartScanning;
         event Action onScanerDisable;
         event Action<bool> onChangeIsScanning;
 
@@ -31,13 +31,15 @@ namespace Planet_Window
         [Inject] private IPointerManager pointer;
 
         private IScanerObserver observer;
+        private IPointOfInterest increasingValuePOI;
         private bool isScanning;
-        private bool isEnabled;
 
         [SerializeField] private RectTransform colliderTransform;
         [SerializeField] private PlanetWindow_Scaner view;
 
         [SerializeField] private float distToDetectPlanet = 100.0f;
+
+        [SerializeField] private RectTransform scanerArea;
 
         [Header("speeds")]
         [SerializeField] private float speedOfDecrease = 0.5f;
@@ -52,8 +54,7 @@ namespace Planet_Window
         public event Action onScanerEnable;
         public event Action onScanerDisable;
         public event Action<bool> onChangeIsScanning;
-        public event Action onStartScanning;
-
+        
         private Dictionary<IPointOfInterest, float> seePointValues;
         private IPointOfInterest lastSeenPointOfInterest;
         private IPlanet scanningPlanet;
@@ -64,18 +65,13 @@ namespace Planet_Window
             resolver.Inject(observer = new ScanerObserver(view, this));
         }
 
-        public void Start()
-        {
-            //
-        }
-
         public void Initialize()
         {
             boxCollider = gameObject.GetComponent<BoxCollider2D>();
             seePointValues = new Dictionary<IPointOfInterest, float>();
 
             isScanning = false;
-            isEnabled = false;
+            increasingValuePOI = null;
 
             travelManager.onTravelToPlanet += SetScanningPlanet;
 
@@ -119,8 +115,6 @@ namespace Planet_Window
                 Disable();
                 onScanerDisable?.Invoke();
             }
-
-            isEnabled = false;
         }
 
         public void SwapStatus()
@@ -138,39 +132,32 @@ namespace Planet_Window
             lastSeenPointOfInterest = null;
             gameObject.SetActive(true);
 
-            pointer.OnDoubleTap += StartScanning;
-        }
-
-        private void StartScanning()
-        {
-            pointer.OnDoubleTap -= StartScanning;
-
-            isEnabled = true;
-            onStartScanning?.Invoke();
-
-            pointer.OnDoubleTap += CheckPoint;
+            pointer.OnPointerUp += CheckPoint;
         }
 
         private void Disable()
         {
             seePointValues.Clear();
 
-            isEnabled = false;
             observer.Disable();
             gameObject.SetActive(false);
 
-            pointer.OnDoubleTap -= StartScanning;
-            pointer.OnDoubleTap -= CheckPoint;
+            pointer.OnPointerUp -= CheckPoint;
         }
 
-        private void CheckPoint()
+        private void CheckPoint() //TODO: высылает дрона когда мы нажимаем на кнопку выключения сканера
         {
+            if(!IsMouseInArea())
+            {
+                return;
+            }
+
+            SetStatus(false);
             Vector2 nowWorldPos = pointer.NowWorldPosition;
 
             if (lastSeenPointOfInterest == null)
             {
                 drone.Land(nowWorldPos, lastSeenPointOfInterest);
-                SetStatus(false);
                 return;
             }
 
@@ -182,22 +169,25 @@ namespace Planet_Window
             }
             drone.Land(nowWorldPos, lastSeenPointOfInterest);
 
-            SetStatus(false);
+            pointer.OnPointerUp -= CheckPoint;
         }
 
         void OnTriggerStay2D(Collider2D other)
         {
-            if (!isEnabled)
-                return;
-
             IPointOfInterest pointOfInterest = other.GetComponent<IPointOfInterest>();
-
+            increasingValuePOI = pointOfInterest;
+            
             if (pointOfInterest == null)
                 return;
-
+            
             IncreaseSeeValue(pointOfInterest);
 
             lastSeenPointOfInterest = pointOfInterest;
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            increasingValuePOI = null;
         }
 
         private void ReduceSeeValues()
@@ -205,6 +195,9 @@ namespace Planet_Window
             List<IPointOfInterest> listPOI = SeePointValueByPOI.Keys.ToList();
             foreach (IPointOfInterest poi in listPOI)
             {
+                if (increasingValuePOI == poi)
+                    continue;
+
                 SeePointValueByPOI[poi] = Mathf.Lerp(SeePointValueByPOI[poi],
                                                      0.0f,
                                                      Time.deltaTime * speedOfDecrease);
@@ -238,6 +231,34 @@ namespace Planet_Window
         {
             scanningPlanet = planet;
         }
-    }
 
+        private bool IsMouseInArea()
+        {
+            if (scanerArea == null)
+                return true;
+
+            Rect rect = scanerArea.rect;
+            Vector2 point = (Vector2)Input.mousePosition - new Vector2(Screen.width / 2, Screen.height / 2);
+
+            // Get the left, right, top, and bottom boundaries of the rect
+            float leftSide = scanerArea.anchoredPosition.x - rect.width / 2;
+            float rightSide = scanerArea.anchoredPosition.x + rect.width / 2;
+            float topSide = scanerArea.anchoredPosition.y + rect.height / 2;
+            float bottomSide = scanerArea.anchoredPosition.y - rect.height / 2;
+
+            //Debug.Log(leftSide + ", " + rightSide + ", " + topSide + ", " + bottomSide);
+
+            // Check to see if the point is in the calculated bounds
+            if (point.x >= leftSide &&
+                point.x <= rightSide &&
+                point.y >= bottomSide &&
+                point.y <= topSide)
+            {
+                return true;
+            }
+
+            return false;
+        }
+        public void Start() { }
+    }
 }

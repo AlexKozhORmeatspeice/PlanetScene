@@ -22,12 +22,13 @@ namespace Planet_Window
         {
             this.scaner = scaner;
             this.view = view;
-            lastSpeed = 0.0f;
         }
 
         public void Enable()
         {
-            scaner.onStartScanning += EnableScanning;
+            lastSpeed = 0.0f;
+
+            scaner.onScanerEnable += EnableScanning;
             pointer.OnUpdate += ChangeSize;
 
             view.isVisible = true;
@@ -39,15 +40,22 @@ namespace Planet_Window
             view.isVisible = false;
             view.scanerFiledIsVisible = false;
 
-            scaner.onStartScanning -= EnableScanning;
+            scaner.onScanerEnable -= EnableScanning;
             pointer.OnUpdate -= ChangeSize;
         }
 
         private void ChangeSize()
         {
-            float speed = Mathf.Pow(pointer.Speed.magnitude, view.MouseSpeedInfluence);
-            lastSpeed = Mathf.Lerp(lastSpeed, speed, Time.deltaTime * view.SpeedOfChange);
-            lastSpeed = Mathf.Clamp01(lastSpeed);
+            float speed = Mathf.Clamp01(pointer.Speed.magnitude / view.MaxMouseSpeed);
+            
+            if(speed > lastSpeed)
+            {
+                lastSpeed = speed;
+            }
+            else
+            {
+                lastSpeed -= view.SpeedOfDecrise * Time.deltaTime;
+            }
 
             view.ChangeSize(lastSpeed);
         }

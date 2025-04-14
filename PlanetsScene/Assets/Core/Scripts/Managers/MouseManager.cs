@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,13 +33,14 @@ public class MouseManager : IPointerManager, ITickable
     private Vector3 lastClickPos;
     private bool IsMouseDown;
 
+    private const float deltaTimeThreshold = 0.1f;
     private const float tapThreshold = 0.25f;
     private float tapTimer = 0.0f;
     private bool tap = false;
 
     private Vector2 speed;
     private Vector2 lastFrameMousePos;
-    private float timeElapsedFromLastFrame;
+    private float timeLastFrame;
 
     public event Action OnPointerMove;
     public event Action OnPointerUp;
@@ -70,26 +70,33 @@ public class MouseManager : IPointerManager, ITickable
         IsMouseDown = false;
 
         _camera = Camera.main;
+
+        timeLastFrame = Time.time;
     }
 
     public void Tick()
     {
-        CalculateSpeed();
         CheckEvents();
+        CalculateSpeed();
 
         OnUpdate?.Invoke();
     }
 
     private void CalculateSpeed()
     {
-        Vector2 nowMousePos = Input.mousePosition;
+        float dt = (Time.time - timeLastFrame);
+        if (dt < deltaTimeThreshold)
+            return;
+
+        Vector2 nowMousePos = NowWorldPosition;
         Vector2 dl = (nowMousePos - lastFrameMousePos);
 
         Vector2 dlAbs = new Vector2(Mathf.Abs(dl.x), Mathf.Abs(dl.y));
         
-        speed = dlAbs / Time.deltaTime;
+        speed = dlAbs / dt;
 
         lastFrameMousePos = nowMousePos;
+        timeLastFrame = Time.time;
     }
 
     private void CheckEvents()
