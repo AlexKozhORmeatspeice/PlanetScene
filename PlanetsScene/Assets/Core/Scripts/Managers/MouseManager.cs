@@ -60,7 +60,6 @@ public class MouseManager : IPointerManager, ITickable
 
     public Vector2 Speed => speed;
 
-
     [Inject]
     public void Construct()
     {

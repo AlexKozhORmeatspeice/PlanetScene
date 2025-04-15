@@ -69,8 +69,8 @@ namespace Planet_Window
             scaner.onScanerDisable -= SetInterective;
             scaner.onChangeIsScanning -= CheckScanerDetection;
 
-            planetWindow.onEnable += view.Show;
-            planetWindow.onDisable += view.Hide;
+            planetWindow.onEnable -= view.Show;
+            planetWindow.onDisable -= view.Hide;
         }
 
         private void ShowPlanetPOI(IPlanet planet)
@@ -142,6 +142,9 @@ namespace Planet_Window
 
         private float GetOuterDist()
         {
+            if(view == null)
+                return 0.0f;
+
             return 0.5f * view.Size.magnitude;
         }
     }

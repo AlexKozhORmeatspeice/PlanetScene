@@ -627,7 +627,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colliderTransform: {fileID: 417200318999200718}
   view: {fileID: 3441754267193829866}
-  distToDetectPlanet: 100
+  distToDetectPlanet: 150
   scanerArea: {fileID: 0}
   speedOfDecrease: 2
   speedOfIncrease: 2

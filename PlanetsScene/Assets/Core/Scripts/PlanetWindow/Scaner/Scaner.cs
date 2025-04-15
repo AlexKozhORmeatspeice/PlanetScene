@@ -161,8 +161,8 @@ namespace Planet_Window
                 return;
             }
 
-            float dist = Vector3.Distance(pointer.NowWorldPosition, lastSeenPointOfInterest.GameObject.transform.position);
-
+            float dist = Vector3.Distance(pointer.NowScreenPosition, Camera.main.WorldToScreenPoint(lastSeenPointOfInterest.GameObject.transform.position));
+            
             if (dist > distToDetectPlanet)
             {
                 lastSeenPointOfInterest = null;
@@ -237,27 +237,11 @@ namespace Planet_Window
             if (scanerArea == null)
                 return true;
 
-            Rect rect = scanerArea.rect;
-            Vector2 point = (Vector2)Input.mousePosition - new Vector2(Screen.width / 2, Screen.height / 2);
+            Vector2 lp;
+            Vector2 mousePos = Input.mousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(scanerArea, mousePos, Camera.main, out lp);
 
-            // Get the left, right, top, and bottom boundaries of the rect
-            float leftSide = scanerArea.anchoredPosition.x - rect.width / 2;
-            float rightSide = scanerArea.anchoredPosition.x + rect.width / 2;
-            float topSide = scanerArea.anchoredPosition.y + rect.height / 2;
-            float bottomSide = scanerArea.anchoredPosition.y - rect.height / 2;
-
-            //Debug.Log(leftSide + ", " + rightSide + ", " + topSide + ", " + bottomSide);
-
-            // Check to see if the point is in the calculated bounds
-            if (point.x >= leftSide &&
-                point.x <= rightSide &&
-                point.y >= bottomSide &&
-                point.y <= topSide)
-            {
-                return true;
-            }
-
-            return false;
+            return scanerArea.rect.Contains(lp);
         }
         public void Start() { }
     }

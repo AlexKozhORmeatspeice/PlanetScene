@@ -70,9 +70,10 @@ namespace Planet_Window
             else
             {
                 scanerData = new ScanerData();
-                scanerData.maxSquareSize = new Vector2(300.0f, 300.0f);
-                scanerData.maxMouseSpeed = 44.0f;
-                scanerData.speedOfDecrise = 1.0f;
+                scanerData.minSquareSize = new Vector2(60.0f, 60.0f);
+                scanerData.maxSquareSize = new Vector2(800.0f, 800.0f);
+                scanerData.maxMouseSpeed = 15.0f;
+                scanerData.speedOfDecrise = 0.25f;
 
                 string json = JsonUtility.ToJson(scanerData);
                 
@@ -80,6 +81,7 @@ namespace Planet_Window
                 File.WriteAllText(path, json);
             }
 
+            minSize = scanerData.minSquareSize;
             maxSize = scanerData.maxSquareSize;
             maxMouseSpeed = scanerData.maxMouseSpeed;
             speedOfDecrise = scanerData.speedOfDecrise;
@@ -89,6 +91,7 @@ namespace Planet_Window
         {
             public float maxMouseSpeed;
             public float speedOfDecrise;
+            public Vector2 minSquareSize;
             public Vector2 maxSquareSize;
         }
     }

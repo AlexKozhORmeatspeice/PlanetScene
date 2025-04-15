@@ -6,6 +6,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using Space_Screen;
+using Planet_Window;
 
 public interface ITravelManager
 {
@@ -25,6 +26,7 @@ public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposa
     private IPlanet activePlanet;
     public event Action<IPlanet> onTravelToPlanet;
     public event Action onTravel;
+    private bool isCanTravel = false;
 
     public IPlanet nowPlanet {
         get
@@ -40,11 +42,14 @@ public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposa
     public string nowPlanetDesc => activePlanet == null ? "" : activePlanet.Description;
 
     public bool IsNowPlanet(IPlanet planet)
-    {
+    { 
         return activePlanet != null && activePlanet.Equals(planet);
     }
     private void SetNowPlanet(IPlanet planet)
     {
+        if (!isCanTravel)
+            return;
+
         activePlanet = planet;
         
         onTravelToPlanet?.Invoke(planet);
@@ -53,13 +58,14 @@ public class TravelManager : MonoBehaviour, ITravelManager, IStartable, IDisposa
 
     public void Initialize()
     {
+        isCanTravel = true;
         activePlanet = null;
-        planetMouse.OnMouseDoubleClick += SetNowPlanet;
+        planetMouse.OnMouseClick += SetNowPlanet;
     }
 
     public void Dispose()
     {
-        planetMouse.OnMouseDoubleClick -= SetNowPlanet;
+        planetMouse.OnMouseClick -= SetNowPlanet;
     }
 
     public void Start() { }

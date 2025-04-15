@@ -53,14 +53,8 @@ namespace Space_Screen
                 return;
             }
 
-            IPlanet newPlanet = null;
-            foreach(RaycastResult result in raycastList)
-            {
-                if(result.gameObject.TryGetComponent(out newPlanet))
-                {
-                    break;
-                }
-            }
+            IPlanet newPlanet = raycastList[0].gameObject.GetComponent<IPlanet>(); //оставил только 1, чтобы не срабатывал инпут на экране сканера
+            
 
             if(newPlanet == null)
             {
