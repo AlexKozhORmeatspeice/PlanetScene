@@ -9,7 +9,6 @@ namespace Reptutation_Screen
 {
     public interface IFraction
     {
-
         Vector3 Size { get; }
         Texture Image { set; }
         string Name { set; get; }

@@ -27,7 +27,7 @@ namespace Reptutation_Screen
         [Header("UI settings")]
         [SerializeField] private Transform startTransform;
         [SerializeField] private float topOffset = 2.0f;
-        [SerializeField] private float distBetween = 5.0f;
+        [SerializeField] private float distBetweenY = 5.0f;
 
         [Header("Objs")]
         [SerializeField] private Transform parentObject;
@@ -45,7 +45,7 @@ namespace Reptutation_Screen
             Vector3 startPos = startTransform.position;
             Vector3 nowPos = startPos;
 
-            float stepY = -(fractionPrefab.Size.y + distBetween);
+            float stepY = -(fractionPrefab.Size.y + distBetweenY);
             foreach (FractionInfo info in fractionInfos)
             {
                 IFraction newFraction = GameObject.Instantiate(fractionPrefab, nowPos, Quaternion.identity, parentObject);

@@ -100,9 +100,6 @@ namespace Space_Screen
             OnMouseDoubleClick?.Invoke(hoveredPlanet);
         }
 
-        public void Start()
-        {
-            //
-        }
+        public void Start() { }
     }
 }

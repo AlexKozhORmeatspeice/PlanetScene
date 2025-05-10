@@ -126,13 +126,13 @@ public class MouseManager : IPointerManager, ITickable
 
             tap = true;
             tapTimer = Time.time;
+
+            OnPointerDown?.Invoke();
         }
 
         if (!IsMouseDown && tap == true && Time.time > tapTimer + tapThreshold)
         {
             tap = false;
-
-            OnPointerDown?.Invoke();
         }
     }
 }

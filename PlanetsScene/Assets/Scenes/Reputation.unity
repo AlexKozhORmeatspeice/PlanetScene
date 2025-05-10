@@ -707,7 +707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startTransform: {fileID: 746409652}
   topOffset: 2
-  distBetween: 40
+  distBetweenY: 5
   parentObject: {fileID: 1932900071}
   fractionPrefab: {fileID: 1636068512}
   fractionInfos:
