@@ -19,6 +19,7 @@ namespace Menu
         float OuterDistMultilpier { get; }
 
         void AnimatePosition(Vector3 position);
+        void AnimatePress();
     }
 
     public class ButtonView : MonoBehaviour, IButtonView
@@ -72,6 +73,17 @@ namespace Menu
 
             text.color = Color.Lerp(hideTextColor, visibleTextColor, t01);
         }
+
+        public void AnimatePress()
+        {
+            rectTransform.DOScale(0.85f, 0.1f).OnComplete(
+                () =>
+                {
+                    rectTransform.DOScale(1.0f, 0.1f);
+                });
+
+        }
+
 
 
     }

@@ -465,8 +465,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
+  m_Material: {fileID: 2100000, guid: 2318db69dd34b7b408047c2ac10d860d, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3137255}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -505,8 +505,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bg: {fileID: 63065922}
   timeCycle: 4
-  firstColor: {r: 0.34901962, g: 0.34901962, b: 0.34901962, a: 1}
-  secondColor: {r: 0.34901962, g: 0.34901962, b: 0.34901962, a: 0.2509804}
+  firstColor: {r: 1, g: 1, b: 1, a: 0.3137255}
+  secondColor: {r: 1, g: 1, b: 1, a: 0.19607843}
 --- !u!1 &70393336
 GameObject:
   m_ObjectHideFlags: 0
@@ -4429,6 +4429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elemsStartXOffset: -520
+  delayBeforeOpenScreenMil: 300
   newGameButtonView: {fileID: 1357486147}
   loadGameView: {fileID: 736772541}
   continueGameView: {fileID: 219400388}

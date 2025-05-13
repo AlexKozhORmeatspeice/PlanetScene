@@ -24,13 +24,13 @@ namespace Frontier_anim
         private Image bg;
         private float bgAlphaStart = 0.0f;
         private float bgAlphaEnd = 0.9058824f;
-        private float timeForAppearBG = 0.1f;
+        private float timeForAppearBG = 0.2f;
 
         private List<CanvasGroupAnimData> canvasGroups;
 
         protected override void InitAnim()
         {
-            bg = gameObject.GetComponentInChildren<Image>();
+            bg = null;
 
             if (canvasGroups == null)
             {
@@ -45,9 +45,12 @@ namespace Frontier_anim
         protected override Sequence EndBuild()
         {
             Sequence openSeq = DOTween.Sequence();
-
-            openSeq.Append(bg.DOFade(bgAlphaStart, 0.0f));
-            openSeq.Append(bg.DOFade(bgAlphaEnd, timeForAppearBG));
+            
+            if(bg != null)
+            {
+                openSeq.Append(bg.DOFade(bgAlphaStart, 0.0f));
+                openSeq.Append(bg.DOFade(bgAlphaEnd, timeForAppearBG));
+            }
 
             foreach (CanvasGroupAnimData data in canvasGroups)
             {

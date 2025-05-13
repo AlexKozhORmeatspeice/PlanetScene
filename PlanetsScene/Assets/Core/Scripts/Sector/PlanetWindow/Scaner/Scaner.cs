@@ -35,7 +35,7 @@ namespace Planet_Window
         private bool isScanning;
 
         [SerializeField] private RectTransform colliderTransform;
-        [SerializeField] private PlanetWindow_Scaner view;
+        [SerializeField] private ScanerView view;
 
         [SerializeField] private float distToDetectPlanet = 100.0f;
 
@@ -112,8 +112,8 @@ namespace Planet_Window
             }
             else
             {
-                Disable();
                 onScanerDisable?.Invoke();
+                Disable();
             }
         }
 
@@ -130,7 +130,6 @@ namespace Planet_Window
             observer.Enable();
 
             lastSeenPointOfInterest = null;
-            gameObject.SetActive(true);
 
             pointer.OnPointerUp += CheckPoint;
         }
@@ -140,7 +139,6 @@ namespace Planet_Window
             seePointValues.Clear();
 
             observer.Disable();
-            gameObject.SetActive(false);
 
             pointer.OnPointerUp -= CheckPoint;
         }

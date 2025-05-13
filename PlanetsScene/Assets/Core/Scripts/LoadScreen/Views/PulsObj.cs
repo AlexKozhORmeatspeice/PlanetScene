@@ -8,7 +8,9 @@ namespace Load_screen
 {
     public interface IPulsObj
     {
+        Color GetNowColor();
         void StartAnim();
+        void StopAnim();
     }
 
     public class PulsObj : MonoBehaviour, IPulsObj
@@ -17,38 +19,24 @@ namespace Load_screen
         [SerializeField] private float timeCycle;
         [SerializeField] private Color firstColor;
         [SerializeField] private Color secondColor;
-        private Sequence seq;
         private bool canPlayAnim = false;
-
+        private float startRandTimeOffset;
         public void StartAnim()
-        {
-            if (seq == null)
-                return;
-            
+        {   
             canPlayAnim = true;
             SetNewAlphaByTime(Time.time);
+        }
 
-            //seq.Play();
+        public void StopAnim()
+        {
+            canPlayAnim = false;
         }
 
         private void Update()
         {
             if (!canPlayAnim)
                 return;
-
-            SetNewAlphaByTime(Time.time);
-        }
-
-        private void Awake()
-        {
-            seq = DOTween.Sequence();
-            seq.Append(bg.DOColor(secondColor, timeCycle / 2.0f).SetEase(Ease.InSine));
-            seq.Append(bg.DOColor(firstColor, timeCycle / 2.0f).SetEase(Ease.OutSine));
-
-            seq.SetLoops(-1, LoopType.Yoyo);
-
-            seq.SetLink(gameObject);
-            seq.Pause();
+            SetNewAlphaByTime(Time.time + startRandTimeOffset);
         }
 
         private void SetNewAlphaByTime(float time)
@@ -57,6 +45,20 @@ namespace Load_screen
 
             Color newColor = firstColor * t + secondColor * (1.0f - t);
             bg.color = newColor;
+        }
+
+        public Color GetNowColor()
+        {
+            float t = Mathf.Sin((Time.time + startRandTimeOffset) * 2 * Mathf.PI / timeCycle) * 0.5f + 0.5f;
+
+            Color newColor = firstColor * t + secondColor * (1.0f - t);
+
+            return newColor;
+        }
+
+        private void Awake()
+        {
+            startRandTimeOffset = UnityEngine.Random.Range(0.0f, timeCycle);
         }
     }
 }

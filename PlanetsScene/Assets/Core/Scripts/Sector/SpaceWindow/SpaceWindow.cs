@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using VContainer;
 using Planet_Window;
+using Frontier_UI;
 
 namespace Space_Screen
 {
@@ -15,7 +16,10 @@ namespace Space_Screen
     public class SpaceWindow : MonoBehaviour, ISpaceWindow, IDisposable
     {
         [SerializeField] private GameObject planetsContent;
+        [SerializeField] private StartFadePanel fadePanel;
+
         private List<IPlanetObserver> planetObservers;
+        private IFadePanelObserver fadePanelObserver;
 
         [Inject]
         public void Construct(IObjectResolver resolver)
@@ -30,6 +34,10 @@ namespace Space_Screen
                 planetObserver.Enable();
                 planetObservers.Add(planetObserver);
             }
+
+            fadePanelObserver = new FadePanelObserver(fadePanel);
+            resolver.Inject(fadePanelObserver);
+            fadePanelObserver.Enable();
         }
 
         public void Dispose()
@@ -39,6 +47,8 @@ namespace Space_Screen
                 planet.Disable();
             }
             planetObservers.Clear();
+
+            fadePanelObserver.Disable();
         }
     }
 

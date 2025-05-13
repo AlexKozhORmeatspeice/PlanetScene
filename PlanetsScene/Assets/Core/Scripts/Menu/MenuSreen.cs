@@ -25,6 +25,7 @@ namespace Menu
 
         [Header("Settings")]
         [SerializeField] private float elemsStartXOffset = 520.0f;
+        [SerializeField] private int delayBeforeOpenScreenMil = 300;
 
         [Header("Objs")]
         [SerializeField] private ButtonView newGameButtonView;
@@ -37,6 +38,8 @@ namespace Menu
         [SerializeField] private MenuSideBarView menuSideBar;
 
         public float XStartAnimOffset => elemsStartXOffset;
+
+        public int DelayBeforeOpenScreenMil => delayBeforeOpenScreenMil;
 
         public void Initialize()
         {
@@ -78,5 +81,6 @@ namespace Menu
     public interface IMenuScreen
     {
         float XStartAnimOffset { get; }
+        int DelayBeforeOpenScreenMil { get; }
     }
 }

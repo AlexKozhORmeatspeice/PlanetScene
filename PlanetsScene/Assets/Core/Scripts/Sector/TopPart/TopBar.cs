@@ -1,52 +1,43 @@
 using System;
+using Top_Bar;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Top_Bar
+namespace Space_TopBar
 {
     public interface ITopBar
     {
-        void SetButtonsVisability(bool isVisible);
+
     }
 
-    public class TopBar : MonoBehaviour, ITopBar, IStartable, IDisposable
+    public class TopBar : MonoBehaviour, IStartable, IDisposable
     {
-        private ISectorNameObserver sectorNameObserver;
-        private IBackToPlanetButtonObserver goBackPresenter;
-        private ITopPart_ButtonsObserver buttonsObserver;
+        [SerializeField] private TopBarView view;
+        [SerializeField] private IconButton backBtn;
 
-        [SerializeField] private TopPart_SectorName sectorNameView;
-        [SerializeField] private IconButton goBackBtnView;
-        [SerializeField] private GameObject buttonsContent;
+        private ITopBarObserver observer;
+        private IBackBtnObserver backBtnObserver;
 
         [Inject]
         public void Construct(IObjectResolver resolver)
         {
-            resolver.Inject(goBackPresenter = new BackToPlanetButtonObserver(goBackBtnView));
-            resolver.Inject(sectorNameObserver = new SectorNameObserver(sectorNameView));
-            resolver.Inject(buttonsObserver = new TopPart_ButtonsObserver(this));
+            resolver.Inject(observer = new TopBarObserver(view));
+            resolver.Inject(backBtnObserver = new BackBtnObserver(backBtn));
         }
 
         public void Initialize()
         {
-            goBackPresenter.Enable();
-            sectorNameObserver.Enable();
-            buttonsObserver.Enable();
+            observer.Enable();
+            backBtnObserver.Enable();
         }
 
         public void Dispose()
         {
-            goBackPresenter.Disable();
-            sectorNameObserver.Disable();
-            buttonsObserver.Disable();
+            observer.Disable();
+            backBtnObserver.Disable();
         }
 
-        public void SetButtonsVisability(bool isVisible)
-        {
-            buttonsContent.SetActive(isVisible);
-        }
-
-        void IStartable.Start() {}
+        public void Start() { }
     }
 }

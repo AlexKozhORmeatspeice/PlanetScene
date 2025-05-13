@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Game_camera;
 using Save_screen;
 using Settings_Screen;
@@ -48,6 +49,8 @@ namespace Menu
 
             settingsScreen.onEnable += SetNotInterective;
             settingsScreen.onDisable += SetInterective;
+
+            view.onClick += view.AnimatePress;
         }
 
         public void Disable()
@@ -61,20 +64,33 @@ namespace Menu
 
             settingsScreen.onEnable -= SetNotInterective;
             settingsScreen.onDisable -= SetInterective;
+
+            view.onClick -= view.AnimatePress;
         }
 
         private void SetInterective()
         {
             pointer.OnPointerMove += ChangeStateByMouse;
-            view.onClick += settingsScreen.Enable;
+            view.onClick += OpenSettings;
         }
 
         private void SetNotInterective()
         {
             pointer.OnPointerMove -= ChangeStateByMouse;
-            view.onClick -= settingsScreen.Enable;
+            view.onClick -= OpenSettings;
 
             view.LerpObjectState(0.0f);
+        }
+
+        private async void OpenSettings()
+        {
+            await AsyncOpenSettings();
+        }
+
+        private async UniTask AsyncOpenSettings()
+        {
+            await UniTask.Delay(menuScreen.DelayBeforeOpenScreenMil);
+            settingsScreen.Enable();
         }
 
         private void AnimatePos()

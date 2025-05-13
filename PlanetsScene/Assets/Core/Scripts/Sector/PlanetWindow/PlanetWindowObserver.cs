@@ -32,17 +32,20 @@ namespace Planet_Window
         {
             choosedPlanet = planet;
 
+            view.SetWindowVisabitility(true);
+            view.PlayOpenAnim();
+            Debug.Log("Opened");
+
             EnableInfo();
             EnableScanerFiled();
             EnableGraphic();
 
-            view.SetWindowVisabitility(true);
         }
 
         public void Disable()
         {
-            view.SetWindowVisabitility(false);
-
+            view.PlayCloseAnim();
+            
             DisableInfo();
             DisableScanerFiled();
             DisableGraphic();

@@ -16,9 +16,9 @@ namespace Planet_Window
         private IScaner scaner;
         [Inject] private IPointerManager pointer;
 
-        private IPlanetWindow_Scaner view;
+        private IScanerView view;
         private float lastSpeed;
-        public ScanerObserver(IPlanetWindow_Scaner view, IScaner scaner)
+        public ScanerObserver(IScanerView view, IScaner scaner)
         {
             this.scaner = scaner;
             this.view = view;
@@ -31,6 +31,9 @@ namespace Planet_Window
             scaner.onScanerEnable += EnableScanning;
             pointer.OnUpdate += ChangeSize;
 
+            scaner.onScanerEnable += SetVisible;
+            scaner.onScanerDisable += SetNotVisible;
+
             view.isVisible = true;
             view.scanerFiledIsVisible = false;
         }
@@ -42,6 +45,19 @@ namespace Planet_Window
 
             scaner.onScanerEnable -= EnableScanning;
             pointer.OnUpdate -= ChangeSize;
+
+            scaner.onScanerEnable -= SetVisible;
+            scaner.onScanerDisable -= SetNotVisible;
+        }
+
+        private void SetVisible()
+        {
+            view.isVisible = true;
+        }
+
+        private void SetNotVisible()
+        {
+            view.isVisible = false;
         }
 
         private void ChangeSize()

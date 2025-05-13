@@ -43,14 +43,14 @@ namespace Save_screen
             AnimService.Instance.BuildAnim<OpenPopUp>(gameObject)
                 .SetImage(bg)
                 .AddCanvasGroup(infoCanvasGroup)
-                .AddCanvasGroup(topBarCanvasGroup, 0.1f, 0.0f, 1.0f, 1.0f, 1.0f)
+                .AddCanvasGroup(topBarCanvasGroup, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f)
                 .SetCallback(CallEndOpen)
                 .Build();
 
             AnimService.Instance.BuildAnim<ClosePopUp>(gameObject)
                 .SetImage(bg)
                 .AddCanvasGroup(infoCanvasGroup)
-                .AddCanvasGroup(topBarCanvasGroup, 0.1f, 1, 0, 1, 1)
+                .AddCanvasGroup(topBarCanvasGroup, 0.2f, 1, 0, 1, 1)
                 .SetCallback(CallEndClose)
                 .Build();
         }

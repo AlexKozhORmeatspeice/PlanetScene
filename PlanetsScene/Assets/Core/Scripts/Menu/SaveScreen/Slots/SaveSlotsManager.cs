@@ -138,7 +138,7 @@ namespace Save_screen
         private void CreateNewSaveSlot()
         {
             newSaveSlotObserver = new NewGameSaveSlotObserver(newSaveSlotPrefab);
-            saveButtonObserver = new SaveButtonObserver(newSaveSlotPrefab.SaveButton);
+            saveButtonObserver = new SaveButtonObserver(newSaveSlotPrefab.SaveButton, newSaveSlotPrefab);
 
             resolver.Inject(newSaveSlotObserver);
             resolver.Inject(saveButtonObserver);

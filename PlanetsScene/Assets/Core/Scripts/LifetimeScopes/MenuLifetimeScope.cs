@@ -31,7 +31,7 @@ public class MenuLifetimeScope : LifetimeScope
         builder.Register<NewSlotMouseEvents>(Lifetime.Scoped)
             .AsImplementedInterfaces();
 
-        builder.Register<LoadManager>(Lifetime.Scoped) 
+        builder.Register<SceneManager>(Lifetime.Scoped) 
             .AsImplementedInterfaces();
 
         builder.Register<SavePopUpsManager>(Lifetime.Scoped)

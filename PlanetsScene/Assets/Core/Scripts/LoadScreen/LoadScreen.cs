@@ -26,7 +26,7 @@ namespace Load_screen
     public class LoadScreen : MonoBehaviour, ILoadScreen, IStartable, IAsyncStartable, IDisposable
     {
         [Inject] private IObjectResolver resolver;
-        [Inject] private ILoadManager loadManager;
+        [Inject] private ISceneManager loadManager;
 
         [SerializeField] private PulsObj pulsPlanetBg;
         [SerializeField] private LoadBar loadBar;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Game_camera;
 using Save_screen;
 using Settings_Screen;
@@ -49,6 +50,8 @@ namespace Menu
             settingsScreen.onEnable += SetNotInterective;
             settingsScreen.onDisable += SetInterective;
 
+            view.onClick += view.AnimatePress;
+
             SetInterective();
         }
 
@@ -61,6 +64,8 @@ namespace Menu
 
             settingsScreen.onEnable -= SetNotInterective;
             settingsScreen.onDisable -= SetInterective;
+
+            view.onClick -= view.AnimatePress;
 
             SetNotInterective();
         }
@@ -113,8 +118,14 @@ namespace Menu
             return view.Size.magnitude;
         }
 
-        private void CreateNewSave()
+        private async void CreateNewSave()
         {
+            await NewSave();
+        }
+
+        private async UniTask NewSave()
+        {
+            await UniTask.Delay(menuScreen.DelayBeforeOpenScreenMil);
             saveScreen.Enable();
             popUpsManager.SetNewSaveVisibility(true, null);
         }

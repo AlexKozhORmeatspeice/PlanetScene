@@ -15,7 +15,7 @@ namespace Save_screen
 
     public class LoadBarObserver : ILoadBarObserver
     {
-        [Inject] private ILoadManager loadManager;
+        [Inject] private ISceneManager loadManager;
 
         private ILoadBar view;
         AsyncOperation loadOper;

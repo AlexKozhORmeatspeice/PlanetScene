@@ -31,6 +31,8 @@ public class IconButton : MonoBehaviour, IIconButton
     [SerializeField][Range(0.0f, 1.0f)] private float pressScaleFactor = 0.95f;
 
     public Image Icon => image;
+    private bool isBase;
+    private bool isHover;
 
     public event UnityAction onClick
     {
@@ -40,44 +42,62 @@ public class IconButton : MonoBehaviour, IIconButton
 
     public void AnimateShow()
     {
-        AnimService.Instance.PlayAnim<ShowButton>(gameObject);
+        AnimService.Instance.PlayAnim<ShowIconButton>(gameObject);
     }
 
     public void AnimateHide()
     {
-        AnimService.Instance.PlayAnim<HideButton>(gameObject);
+        AnimService.Instance.PlayAnim<HideIconButton>(gameObject);
     }
 
     public void AnimateBaseState()
     {
-        AnimService.Instance.PlayAnim<SetBaseButton>(gameObject);
+        if (isBase) return;
+
+        isBase = true;
+        isHover = false;
+
+        AnimService.Instance.PlayAnim<SetBaseIconButton>(gameObject);
     }
 
     public void AnimateHover()
     {
-        AnimService.Instance.PlayAnim<HoverButton>(gameObject);
+        if (isHover) return;
+
+        isBase = false;
+        isHover = true;
+
+        AnimService.Instance.PlayAnim<HoverIconButton>(gameObject);
     }
 
     public void AnimatePressed()
     {
-        AnimService.Instance.PlayAnim<PressButton>(gameObject);
+        isBase = false;
+        isHover = false;
+
+        AnimService.Instance.PlayAnim<PressIconButton>(gameObject);
     }
 
     private void Awake()
     {
-        AnimService.Instance.BuildAnim<HoverButton>(gameObject)
+        isBase = true;
+        isHover = false;
+
+
+        AnimService.Instance.BuildAnim<HoverIconButton>(gameObject)
             .Build();
 
-        AnimService.Instance.BuildAnim<PressButton>(gameObject) 
+        AnimService.Instance.BuildAnim<PressIconButton>(gameObject)
+            .SetCallback(AnimateBaseState)
             .Build();
 
-        AnimService.Instance.BuildAnim<SetBaseButton>(gameObject)
+        AnimService.Instance.BuildAnim<SetBaseIconButton>(gameObject)
             .Build();
 
-        AnimService.Instance.BuildAnim<ShowButton>(gameObject)
+        AnimService.Instance.BuildAnim<ShowIconButton>(gameObject)
             .Build();
 
-        AnimService.Instance.BuildAnim<HideButton>(gameObject)
+        AnimService.Instance.BuildAnim<HideIconButton>(gameObject)
             .Build();
     }
 }

@@ -28,7 +28,7 @@ namespace Game_camera
 
         public void AnimateNewPosition(Vector3 pos)
         {
-            camera.transform.DOMove(pos, timeForMove).SetEase(Ease.InOutCubic)
+            camera.transform.DOMove(pos, timeForMove)
                 .OnComplete(
                     () =>
                     {
@@ -39,7 +39,7 @@ namespace Game_camera
 
         public void AnimateNewSize(float size)
         {
-            camera.DOOrthoSize(size, timeForMove).SetEase(Ease.InOutCubic)
+            camera.DOOrthoSize(size, timeForMove)
                 .OnComplete(
                 () =>
                 {

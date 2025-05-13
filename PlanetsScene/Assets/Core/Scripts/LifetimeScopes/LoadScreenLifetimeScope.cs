@@ -10,7 +10,7 @@ public class LoadScreenLifetimeScope : LifetimeScope
         builder.RegisterComponentInHierarchy<LoadScreen>()
             .AsImplementedInterfaces();
 
-        builder.Register<LoadManager>(Lifetime.Scoped)
+        builder.Register<SceneManager>(Lifetime.Scoped)
             .AsImplementedInterfaces();
     }
 }

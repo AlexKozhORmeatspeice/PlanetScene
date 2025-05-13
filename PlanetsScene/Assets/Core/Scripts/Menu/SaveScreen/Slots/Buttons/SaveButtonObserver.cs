@@ -10,20 +10,26 @@ namespace Save_screen
     }
     public class SaveButtonObserver : ISaveButtonObserver
     {
+        [Inject] private INewSlotMouseEvents slotMouse;
         [Inject] private ITextButtonMouseEvents textBtnMouse;
         [Inject] private IPopUpsManager popUpsManager;
 
         private ITextButton view;
+        private INewSaveSlot newSaveSlot;
 
-        public SaveButtonObserver(ITextButton view)
+        public SaveButtonObserver(ITextButton view, INewSaveSlot slot)
         {
             this.view = view;
+            newSaveSlot = slot;
         }
 
         public void Enable()
         {
             popUpsManager.onActivatePopUp += SetNotInterective;
             popUpsManager.onDisablePopUp += SetInterective;
+
+            slotMouse.OnMouseEnter += AnimateShow;
+            slotMouse.OnMouseLeave += AnimateHide;
 
             SetInterective();
         }
@@ -32,6 +38,9 @@ namespace Save_screen
         {
             popUpsManager.onActivatePopUp -= SetNotInterective;
             popUpsManager.onDisablePopUp -= SetInterective;
+
+            slotMouse.OnMouseEnter -= AnimateShow;
+            slotMouse.OnMouseLeave -= AnimateHide;
 
             SetNotInterective();
         }
@@ -78,6 +87,20 @@ namespace Save_screen
             if (textBtn != view) return;
 
             view.AnimatePressed();
+        }
+
+        private void AnimateHide(INewSaveSlot slot)
+        {
+            if (slot != newSaveSlot) return;
+
+            view.AnimateHide();
+        }
+
+        private void AnimateShow(INewSaveSlot slot)
+        {
+            if (slot != newSaveSlot) return;
+
+            view.AnimateShow();
         }
     }
 }

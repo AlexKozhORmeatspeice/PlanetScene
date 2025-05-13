@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Cysharp.Threading.Tasks;
 using DG.Tweening.Core.Easing;
 using Game_camera;
 using Save_screen;
@@ -82,7 +83,8 @@ namespace Menu
             isInterective = true;
 
             pointer.OnPointerMove += ChangeStateByMouse;
-            view.onClick += saveScreen.Enable;
+            view.onClick += view.AnimatePress;
+            view.onClick += EnableSaveScreen;
         }
 
         private void SetNotInterective()
@@ -90,9 +92,21 @@ namespace Menu
             isInterective = false;
 
             pointer.OnPointerMove -= ChangeStateByMouse;
-            view.onClick -= saveScreen.Enable;
+            view.onClick -= view.AnimatePress;
+            view.onClick -= EnableSaveScreen;
 
             view.LerpObjectState(0.0f);
+        }
+
+        private async void EnableSaveScreen()
+        {
+            await AsyncOpenSave();
+        }
+
+        private async UniTask AsyncOpenSave()
+        {
+            await UniTask.Delay(menuScreen.DelayBeforeOpenScreenMil);
+            saveScreen.Enable();
         }
 
         private void ChangeStateByMouse()

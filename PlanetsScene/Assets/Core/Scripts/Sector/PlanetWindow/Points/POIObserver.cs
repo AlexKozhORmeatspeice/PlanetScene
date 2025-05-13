@@ -124,6 +124,9 @@ namespace Planet_Window
 
         private void ChangeScale()
         {
+            if (view == null)
+                return;
+
             float outerPOIRadius = GetOuterDist();
             float dist = GetMouseToObjDist();
             float alpha = 1.0f - (dist - outerPOIRadius * 1.1f) / (outerPOIRadius * 0.5f); //немного математики, чтобы размер не уменьшался, если мы в внутреннем радиусе

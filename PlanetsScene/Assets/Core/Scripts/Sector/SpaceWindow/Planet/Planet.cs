@@ -5,39 +5,58 @@ using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
 using Planet_Window;
+using Game_UI;
+using DG.Tweening;
+using Load_screen;
+using Frontier_anim;
 
 namespace Space_Screen
 {
     public interface IPlanet
     {
-        void ChangeScale(float t01);
-        void ChangeScale(bool isMaxScale);
         List<PointInfo> PointInfos { get; }
         Vector3 Position { get; }
         Vector3 Size { get; }
 
+        IIconButton encBtn { get; }
+
         string Name { get; set; }
         string SectornName { get; set; }
         string Description { get; set; }
+
+        void AnimateHover();
+        void AnimateChoose();
+        void AnimateBase();
     }
 
     public class Planet : MonoBehaviour, IPlanet, IScreenObject
     {
+        [SerializeField] private IconButton encyclopediaButton;
+
+        [Header("Anim settings")]
+        [SerializeField] private float playTime = 0.1f;
+
+        [Header("Lines")]
+        [SerializeField] private CanvasGroup linesCanvasGroup;
+
         [Header("Planet rect")]
         [SerializeField] private RectTransform rectTransformPlanet;
         [SerializeField] private Vector2 closeSize;
         [SerializeField] private Vector2 openSize;
 
         [Header("Button")]
-        [SerializeField] private Image buttonBg;
-        [SerializeField] private TMP_Text buttonText;
-
+        [SerializeField] private Image buttonIcon;
+        
         [Header("Name")]
-        [SerializeField] private RawImage nameBg;
+        [SerializeField] private Image nameOutline;
+        [SerializeField] private Image nameBg;
         [SerializeField] private TMP_Text txtName;
 
         [Header("Background")]
-        [SerializeField] private RawImage backgroundImage;
+        [SerializeField] private Image glowImg;
+        [SerializeField] private PulsObj pulsBG;
+        [SerializeField] private RotatingObj rotatingBG;
+        [SerializeField] private Image backgroundImage;
 
         [Header("Info")]
         [SerializeField] private string planetName;
@@ -71,39 +90,60 @@ namespace Space_Screen
 
         List<PointInfo> IPlanet.PointInfos => points;
 
-        public void ChangeScale(float t01)
+        public IIconButton encBtn => encyclopediaButton;
+
+        private bool isChoosed;
+        private bool isBase;
+        private bool isHover;
+
+        public void AnimateBase()
         {
-            if (rectTransformPlanet == null)
-                return;
+            if (isBase) return;
 
-            t01 = Mathf.Clamp01(t01);
+            rotatingBG.StopAnim();
+            pulsBG.StopAnim();
 
-            //размер
-            rectTransformPlanet.sizeDelta = openSize * t01 + closeSize * (1.0f - t01);
+            AnimService.Instance.PlayAnim<SetBasePlanet>(gameObject);
 
-            //прозрачность фона имени
-            Color nameBgColor = nameBg.color;
-            nameBgColor.a = t01;
-            nameBg.color = nameBgColor;
-
-            //прозрачность кнопки
-            Color btnColor = buttonBg.color;
-            btnColor.a = t01;
-            buttonBg.color = btnColor;
-
-            Color btnTextColor = buttonText.color;
-            btnTextColor.a = t01;
-            buttonText.color = btnTextColor;
-
-            //прозрачность фона
-            Color bgColor = backgroundImage.color;
-            bgColor.a = t01;
-            backgroundImage.color = bgColor;
+            isChoosed = false;
+            isBase = true;
+            isHover = false;
         }
 
-        public void ChangeScale(bool isMaxScale)
+        public void AnimateChoose()
         {
-            ChangeScale(isMaxScale ? 1.0f : 0.0f);
+            if(isChoosed) return;
+
+            rotatingBG.StartAnim();
+
+            AnimService.Instance.PlayAnim<ChoosePlanet>(gameObject);
+
+            isChoosed = true;
+            isBase = false;
+            isHover = false;
+        }
+
+        public void AnimateHover()
+        {
+            if (isHover) return;
+
+            rotatingBG.StopAnim();
+            pulsBG.StopAnim();
+
+            AnimService.Instance.PlayAnim<HoverPlanet>(gameObject);
+
+            isChoosed = false;
+            isBase = false;
+            isHover = true;
+        }
+
+        private void AnimateFadeInBg()
+        {
+            backgroundImage.DOFade(pulsBG.GetNowColor().a, playTime)
+                .OnComplete(() =>
+                {
+                    pulsBG.StartAnim();
+                });
         }
 
         private void Awake()
@@ -111,6 +151,36 @@ namespace Space_Screen
             Name = planetName;
             SectornName = sector;
             Description = description;
+
+            isChoosed = false;
+
+            AnimService.Instance.BuildAnim<ChoosePlanet>(gameObject)
+                .SetRect(rectTransformPlanet, openSize, closeSize)
+                .SetNameData(nameOutline, nameBg, txtName)
+                .SetBtnBg(buttonIcon)
+                .SetLinesCanvasGroup(linesCanvasGroup)
+                .SetBackgroundImage(backgroundImage)
+                .SetGlowBg(glowImg)
+                .SetCallback(AnimateFadeInBg)
+                .Build();
+
+            AnimService.Instance.BuildAnim<HoverPlanet>(gameObject)
+                .SetRect(rectTransformPlanet, openSize, closeSize)
+                .SetNameData(nameOutline, nameBg, txtName)
+                .SetBtnBg(buttonIcon)
+                .SetLinesCanvasGroup(linesCanvasGroup)
+                .SetBackgroundImage(backgroundImage)
+                .SetGlowBg(glowImg)
+                .Build();
+
+            AnimService.Instance.BuildAnim<SetBasePlanet>(gameObject)
+                .SetRect(rectTransformPlanet, openSize, closeSize)
+                .SetNameData(nameOutline, nameBg, txtName)
+                .SetBtnBg(buttonIcon)
+                .SetLinesCanvasGroup(linesCanvasGroup)
+                .SetBackgroundImage(backgroundImage)
+                .SetGlowBg(glowImg)
+                .Build();
         }
     }
 }

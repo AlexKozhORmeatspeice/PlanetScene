@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 using Planet_Window;
+using Frontier_UI;
 
 namespace Space_Screen
 {
@@ -17,7 +18,8 @@ namespace Space_Screen
 
     public class PlanetObserver : IPlanetObserver
     {
-        [Inject] private IPointerManager pointer;
+        [Inject] private IIconButtonMouseEvents btnMouse;
+        [Inject] private IPlanetMouseEvents planetMouse;
         [Inject] private IPlanetWindow planetWindow;
         [Inject] private ITravelManager travelManager;
 
@@ -32,6 +34,9 @@ namespace Space_Screen
         public void Enable()
         {
             SetInterective();
+            SetBtnNotInterective();
+
+            view.AnimateBase();
 
             planetWindow.onEnable += SetNotInterective;
             planetWindow.onDisable += SetInterective;
@@ -42,6 +47,7 @@ namespace Space_Screen
         public void Disable()
         {
             SetNotInterective();
+            SetBtnNotInterective();
 
             planetWindow.onEnable -= SetNotInterective;
             planetWindow.onDisable -= SetInterective;
@@ -64,55 +70,90 @@ namespace Space_Screen
         private void EnableAsChoosedPlanet()
         {
             SetNotInterective();
+            SetBtnInterective();
 
             planetWindow.onEnable -= SetNotInterective;
             planetWindow.onDisable -= SetInterective;
 
-            view.ChangeScale(true);
+            view.AnimateChoose();
             isChoosed = true;
         }
 
         private void DisableAsChoosedPlanet()
         {
             SetInterective();
+            SetBtnNotInterective();
 
             planetWindow.onEnable += SetNotInterective;
             planetWindow.onDisable += SetInterective;
 
-            view.ChangeScale(false);
+            view.AnimateBase();
             isChoosed = false;
         }
 
         public void SetInterective()
         {
-            pointer.OnPointerMove += ChangeScale;
+            planetMouse.OnMouseEnter += AnimateHover;
+            planetMouse.OnMouseLeave += AnimateBase;
         }
 
         public void SetNotInterective()
         {
-            pointer.OnPointerMove -= ChangeScale;
-        }
-        private void ChangeScale()
-        {
-            float outerPlanetRadius = GetOuterDist();
-            float dist = GetMouseToObjDist();
-            float alpha = 1.0f - (dist - outerPlanetRadius * 1.1f) / (outerPlanetRadius * 0.5f); //немного математики, чтобы размер не уменьшался, если мы в внутреннем радиусе
-
-            view.ChangeScale(alpha);
+            planetMouse.OnMouseEnter -= AnimateHover;
+            planetMouse.OnMouseLeave -= AnimateBase;
         }
 
-        private float GetMouseToObjDist()
+        private void SetBtnInterective()
         {
-            Vector3 objPos = (Vector2)(view.Position);
-            Vector3 cursorPos = pointer.NowWorldPosition;
+            view.encBtn.AnimateBaseState();
 
-            //данная формула задает расстояние по квадрату
-            return Mathf.Max(Mathf.Abs(objPos.x - cursorPos.x), Mathf.Abs(objPos.y - cursorPos.y)); 
+            btnMouse.OnMouseEnter += AnimateBtnHover;
+            btnMouse.OnMouseLeave += AnimateBtnBase;
+            btnMouse.OnMouseClick += AnimateBtnPress;
         }
 
-        private float GetOuterDist()
+        private void SetBtnNotInterective()
         {
-            return view.Size.magnitude; 
+            btnMouse.OnMouseEnter -= AnimateBtnHover;
+            btnMouse.OnMouseLeave -= AnimateBtnBase;
+            btnMouse.OnMouseClick -= AnimateBtnPress;
+
+            view.encBtn.AnimateBaseState();
+        }
+
+        private void AnimateHover(IPlanet planet)
+        {
+            if (planet != view) return;
+
+            view.AnimateHover();
+        }
+
+        private void AnimateBase(IPlanet planet)
+        {
+            if (planet != view) return;
+
+            view.AnimateBase();
+        }
+
+        private void AnimateBtnHover(IIconButton btn)
+        {
+            if (btn != view.encBtn) return;
+
+            view.encBtn.AnimateHover();
+        }
+
+        private void AnimateBtnPress(IIconButton btn)
+        {
+            if (btn != view.encBtn) return;
+
+            view.encBtn.AnimatePressed();
+        }
+
+        private void AnimateBtnBase(IIconButton btn)
+        {
+            if (btn != view.encBtn) return;
+
+            view.encBtn.AnimateBaseState();
         }
     }
 

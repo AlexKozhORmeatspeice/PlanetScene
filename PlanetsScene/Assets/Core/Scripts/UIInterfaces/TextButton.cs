@@ -31,28 +31,52 @@ public class TextButton : MonoBehaviour, ITextButton
         remove => button.onClick.RemoveListener(value);
     }
 
+    bool isPressed;
+    bool isBase;
+    bool isHover;
+    bool isHidden;
     public void AnimateShow()
     {
+        isHidden = false;
         AnimService.Instance.PlayAnim<ShowTxtBtn>(gameObject);
     }
 
     public void AnimateHide()
     {
+        isHidden = true;
         AnimService.Instance.PlayAnim<HideTxtBtn>(gameObject);
     }
 
     public void AnimateBaseState()
     {
+        if (isBase || isHidden) return;
+
+        isBase = true;
+        isHover = false;
+        isPressed = false;
+
         AnimService.Instance.PlayAnim<SetBaseTxtBtn>(gameObject);
     }
 
     public void AnimateHover()
     {
+        if (isHover || isHidden) return;
+
+        isBase = false;
+        isHover = true;
+        isPressed = false;
+
         AnimService.Instance.PlayAnim<HoverTxtBtn>(gameObject);
     }
 
     public void AnimatePressed()
     {
+        if (isPressed || isHidden) return;
+
+        isBase = false;
+        isHover = false;
+        isPressed = true;
+
         AnimService.Instance.PlayAnim<PressTxtBtn>(gameObject);
     }
 
@@ -60,10 +84,16 @@ public class TextButton : MonoBehaviour, ITextButton
 
     private void Awake()
     {
+        isHidden = false;
+        isBase = false;
+        isHover = false;
+        isPressed = false;    
+
         AnimService.Instance.BuildAnim<HoverTxtBtn>(gameObject)
             .Build();
 
         AnimService.Instance.BuildAnim<PressTxtBtn>(gameObject)
+            .SetCallback(AnimateBaseState)
             .Build();
 
         AnimService.Instance.BuildAnim<SetBaseTxtBtn>(gameObject)

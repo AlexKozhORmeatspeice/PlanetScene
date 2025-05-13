@@ -145,6 +145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4043532362842806002}
   - component: {fileID: 8185243596313423113}
+  - component: {fileID: 8478149835673771497}
   m_Layer: 5
   m_Name: PlanetToolTip
   m_TagString: Untagged
@@ -185,10 +186,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eede6c1d089c6848bb59c75d5cf0bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvasGroup: {fileID: 8478149835673771497}
+  playTime: 0.1
   titleText: {fileID: 7719714176519497937}
   secondTitleText: {fileID: 0}
   descText: {fileID: 6901182203646289308}
   iconRect: {fileID: 3437075440232547237}
+--- !u!225 &8478149835673771497
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3189334729191059313}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3234191692400322710
 GameObject:
   m_ObjectHideFlags: 0

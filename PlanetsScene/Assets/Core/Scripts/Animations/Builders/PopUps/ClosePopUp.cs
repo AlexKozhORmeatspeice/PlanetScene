@@ -34,7 +34,7 @@ namespace Frontier_anim
 
         protected override void InitAnim()
         {
-            bg = gameObject.GetComponentInChildren<Image>();
+            bg = null;
 
             if (canvasGroups == null)
             {
@@ -66,8 +66,11 @@ namespace Frontier_anim
                 maxAnimTime = Mathf.Max(maxAnimTime, data.playTime);
             }
 
-            closeSeq.Insert(0.0f, bg.DOFade(bgAlphaStart, 0.0f));
-            closeSeq.Insert(maxAnimTime, bg.DOFade(bgAlphaEnd, timeForAppearBG));
+            if(bg != null)
+            {
+                closeSeq.Insert(0.0f, bg.DOFade(bgAlphaStart, 0.0f));
+                closeSeq.Insert(maxAnimTime, bg.DOFade(bgAlphaEnd, timeForAppearBG));
+            }
 
             return closeSeq;
         }

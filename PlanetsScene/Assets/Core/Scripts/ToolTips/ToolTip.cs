@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,6 +27,10 @@ public interface IToolTip
 
 public class ToolTip : MonoBehaviour, IToolTip, IStartable
 {
+    [Header("Anim settings")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float playTime = 0.1f;
+
     [Header("Info")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text secondTitleText;
@@ -106,12 +111,12 @@ public class ToolTip : MonoBehaviour, IToolTip, IStartable
 
     public void Show()
     {
-        gameObject.SetActive(true);
+        canvasGroup.DOFade(1.0f, playTime);
     }
 
     public void Hide()
     {
-        gameObject.SetActive(false);
+        canvasGroup.DOFade(0.0f, playTime);
     }
 
     public void Initialize()
@@ -119,6 +124,5 @@ public class ToolTip : MonoBehaviour, IToolTip, IStartable
         selfRect = GetComponent<RectTransform>();
         startOffset = iconRect.position - selfRect.position;
     }
-
-    public void Start() {}
+    public void Start() { }
 }

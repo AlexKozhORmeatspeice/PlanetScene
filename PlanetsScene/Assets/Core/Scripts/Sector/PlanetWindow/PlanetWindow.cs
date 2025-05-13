@@ -52,13 +52,13 @@ namespace Planet_Window
 
         public void Initialize()
         {
-            travelManager.onTravelToPlanet += Enable;
+            travelManager.onLandToPlanet += Enable;
         }
 
         public void Dispose()
         {
             Disable();
-            travelManager.onTravelToPlanet -= Enable;
+            travelManager.onLandToPlanet -= Enable;
         }
 
 

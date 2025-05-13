@@ -75,6 +75,7 @@ namespace Menu
             isInterective = true;
 
             pointer.OnPointerMove += ChangeStateByMouse;
+            view.onClick += view.AnimatePress;
             view.onClick += CloseGame;
         }
 
@@ -84,6 +85,7 @@ namespace Menu
 
             pointer.OnPointerMove -= ChangeStateByMouse;
             view.onClick -= CloseGame;
+            view.onClick -= view.AnimatePress;
         }
 
         private void AnimatePos()

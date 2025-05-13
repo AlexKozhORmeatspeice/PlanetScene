@@ -281,6 +281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9157896016887834699}
   - component: {fileID: 3666557471897437516}
+  - component: {fileID: 8341134943272277323}
   m_Layer: 5
   m_Name: POIToolTip
   m_TagString: Untagged
@@ -321,10 +322,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eede6c1d089c6848bb59c75d5cf0bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvasGroup: {fileID: 8341134943272277323}
+  playTime: 0.1
   titleText: {fileID: 1897716863282459596}
   secondTitleText: {fileID: 3679428653922173023}
   descText: {fileID: 7012250165494241196}
   iconRect: {fileID: 97298622404810507}
+--- !u!225 &8341134943272277323
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3755452942142977419}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4599905763064008691
 GameObject:
   m_ObjectHideFlags: 0

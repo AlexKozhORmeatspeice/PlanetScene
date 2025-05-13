@@ -77,6 +77,7 @@ namespace Menu
             isInterective = true;
 
             pointer.OnPointerMove += ChangeStateByMouse;
+            view.onClick += view.AnimatePress;
             view.onClick += saveManager.LoadLastSave;
         }
 
@@ -84,6 +85,7 @@ namespace Menu
         {
             isInterective = false;
 
+            view.onClick -= view.AnimatePress;
             view.onClick -= saveManager.LoadLastSave;
             pointer.OnPointerMove -= ChangeStateByMouse;
 

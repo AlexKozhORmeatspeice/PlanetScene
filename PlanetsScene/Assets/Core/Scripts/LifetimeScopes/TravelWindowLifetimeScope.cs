@@ -3,6 +3,8 @@ using VContainer.Unity;
 using Space_Screen;
 using Planet_Window;
 using Top_Bar;
+using Frontier_UI;
+using Space_TopBar;
 
 public class TravelWindowLifetimeScope : LifetimeScope
 {
@@ -11,6 +13,12 @@ public class TravelWindowLifetimeScope : LifetimeScope
         builder.RegisterEntryPoint<EntryPoint>();
 
         builder.RegisterComponentInHierarchy<TravelManager>()
+            .AsImplementedInterfaces();
+
+        builder.Register<IconButtonMouseEvents>(Lifetime.Scoped)
+            .AsImplementedInterfaces();
+
+        builder.Register<TextButtonMouseEvents>(Lifetime.Scoped)
             .AsImplementedInterfaces();
 
         builder.Register<MouseManager>(Lifetime.Singleton)
@@ -81,6 +89,9 @@ public class TravelWindowLifetimeScope : LifetimeScope
         builder.RegisterComponentInHierarchy<POIMouseEvents>()
             .AsImplementedInterfaces()
             .AsSelf();
+
+        builder.RegisterComponentInHierarchy<StartFadePanel>()
+            .AsImplementedInterfaces();
     }
 
     private void Points(IContainerBuilder builder)

@@ -9,6 +9,7 @@ namespace Game_UI
     public interface IRotatingObject
     {
         void StartAnim();
+        void StopAnim();
     }
 
     public class RotatingObj : MonoBehaviour, IRotatingObject
@@ -22,6 +23,11 @@ namespace Game_UI
         public void StartAnim()
         {
             animIsActive = true;
+        }
+
+        public void StopAnim()
+        {
+            animIsActive = false;
         }
 
         private void Awake()

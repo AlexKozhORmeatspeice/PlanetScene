@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Frontier_anim;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -25,6 +25,9 @@ namespace Planet_Window
 
         void ShowScanerFiled();
         void HideScanerFiled();
+
+        void PlayOpenAnim();
+        void PlayCloseAnim();
     }
 
     public class PlanetWindowView : MonoBehaviour, IPlanetWindowView
@@ -42,6 +45,14 @@ namespace Planet_Window
         [SerializeField] private TMP_Text sectorTxt;
         [SerializeField] private TMP_Text nameTxt;
         [SerializeField] private TMP_Text descriptionTxt;
+
+        [Header("Anim objs")]
+        [SerializeField] private Image bg;
+        [SerializeField] private CanvasGroup planetCanvasGroup;
+        [SerializeField] private CanvasGroup infoCanvasGroup;
+        [SerializeField] private CanvasGroup panelCanvasGroup;
+        [SerializeField] private CanvasGroup scanerCanvasGroup;
+        [SerializeField] private LineRenderer lineRenderer;
 
         string IPlanetWindowView.Title
         {
@@ -67,7 +78,14 @@ namespace Planet_Window
 
         public void SetInfoVisibility(bool isVisible)
         {
-            infoObj.SetActive(isVisible);
+            if (isVisible)
+            {
+                AnimateInfoShow();
+            }
+            else
+            {
+                AnimateInfoHide();
+            }
         }
 
 
@@ -76,11 +94,11 @@ namespace Planet_Window
             if (isVisible)
             {
                 graphic.Enable();
-                graphicWindowObj.SetActive(true);
+                AnimateGraphicShow();
             }
             else
             {
-                graphicWindowObj.SetActive(false);
+                AnimateGraphicHide();
                 graphic.Disable();
             }
         }
@@ -107,9 +125,98 @@ namespace Planet_Window
             image.DOColor(newColor, 0.3f).SetEase(Ease.OutFlash);
         }
 
+        private void AnimateInfoShow()
+        {
+            infoObj.SetActive(true);
+
+            AnimService.Instance.PlayAnim<OpenPopUp>(infoObj);
+        }
+
+        private void AnimateInfoHide()
+        {
+            AnimService.Instance.PlayAnim<ClosePopUp>(infoObj);
+        }
+
+        private void AnimateGraphicHide()
+        {
+            AnimService.Instance.PlayAnim<ClosePopUp>(graphicWindowObj);
+        }
+
+        private void AnimateGraphicShow()
+        {
+            graphicWindowObj.SetActive(true);
+
+            AnimService.Instance.PlayAnim<OpenPopUp>(graphicWindowObj);
+        }
+
         public void SetWindowVisabitility(bool isVisible)
         {
             gameObject.SetActive(isVisible);
+        }
+
+        public void PlayOpenAnim()
+        {
+            AnimService.Instance.PlayAnim<OpenPopUp>(gameObject);
+        }
+
+        public void PlayCloseAnim()
+        {
+            AnimService.Instance.PlayAnim<ClosePopUp>(gameObject);
+        }
+
+        public void DisableWindow()
+        {
+            SetWindowVisabitility(false);
+        }
+
+        private void SetUnactiveGraphic()
+        {
+            graphicWindowObj.SetActive(false);
+        }    
+
+        private void SetUnactiveInfo()
+        {
+            infoObj.SetActive(false);
+        }
+
+        public void Awake()
+        {
+            AnimService.Instance.BuildAnim<OpenPopUp>(gameObject)
+                .SetImage(bg, 0.0f, 0.98f)
+                .AddCanvasGroup(planetCanvasGroup)
+                .AddCanvasGroup(panelCanvasGroup)
+                .Build();
+
+            AnimService.Instance.BuildAnim<ClosePopUp>(gameObject)
+                .SetImage(bg, 0.0f, 0.98f)
+                .AddCanvasGroup(planetCanvasGroup)
+                .AddCanvasGroup(panelCanvasGroup)
+                .SetCallback(DisableWindow)
+                .Build();
+
+            AnimService.Instance.BuildAnim<OpenPopUp>(gameObject)
+                .SetImage(bg)
+                .AddCanvasGroup(planetCanvasGroup)
+                .AddCanvasGroup(panelCanvasGroup)
+                .Build();
+
+            AnimService.Instance.BuildAnim<OpenPopUp>(infoObj)
+                .AddCanvasGroup(infoCanvasGroup)
+                .Build();
+
+            AnimService.Instance.BuildAnim<ClosePopUp>(infoObj)
+                .AddCanvasGroup(infoCanvasGroup)
+                .SetCallback(SetUnactiveInfo)
+                .Build();
+
+            AnimService.Instance.BuildAnim<OpenPopUp>(graphicWindowObj)
+                .AddCanvasGroup(scanerCanvasGroup)
+                .Build();
+
+            AnimService.Instance.BuildAnim<ClosePopUp>(graphicWindowObj)
+                .AddCanvasGroup(scanerCanvasGroup)
+                .SetCallback(SetUnactiveGraphic)
+                .Build();
         }
     }
 
